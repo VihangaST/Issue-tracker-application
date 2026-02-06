@@ -1,2 +1,2 @@
-# Issue-tracker-application
-Issue Tracker Application
+# issue-tracker-app
+Issue Tracker App 
