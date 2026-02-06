@@ -5,26 +5,40 @@ function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
   const handleClear = () => {
     setFormData({
       email: "",
       password: "",
-      confirmPassword: "",
     });
   };
 
-  // handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
+    // alert("Login button clicked!"); E
 
-    // check if password and confirm password match
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
-      handleClear();
-      return;
+    try {
+      const response = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        console.log("Login successful:", data.message);
+        navigate("/dashboard");
+      } else {
+        console.log("Login failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Network or unexpected error:", error);
     }
   };
 
@@ -65,23 +79,6 @@ function LoginPage() {
               id="password"
               name="password"
               value={formData.password}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="confirmPassword"
-              className="block text-gray-700 mb-2"
-            >
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
