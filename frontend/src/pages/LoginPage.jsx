@@ -14,9 +14,32 @@ function LoginPage() {
     });
   };
 
-  // handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
+    // alert("Login button clicked!"); E
+
+    try {
+      const response = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        console.log("Login successful:", data.message);
+        navigate("/dashboard");
+      } else {
+        console.log("Login failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Network or unexpected error:", error);
+    }
   };
 
   const handleChange = (e) => {
