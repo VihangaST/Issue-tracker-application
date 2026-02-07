@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import issueRoutes from "./routes/issueRoutes.js";
 import sequelize from "./config/db.js";
 
 const app = express();
@@ -14,6 +15,7 @@ sequelize
   .catch((err) => console.log(err));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/issues", issueRoutes);
 
 const PORT = 5000;
 app.listen(PORT, () => {
