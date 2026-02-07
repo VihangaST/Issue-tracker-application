@@ -14,6 +14,7 @@ function RegistrationPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // handleRegistration function
   const handleRegistration = async (e) => {
     e.preventDefault();
     alert("Registration button clicked!");
@@ -22,14 +23,14 @@ function RegistrationPage() {
       alert("Passwords do not match!");
       return;
     }
-
     try {
-      const response = await fetch(`${BASE_URL}/register`, {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
+          confirmPassword: formData.confirmPassword,
         }),
       });
 
