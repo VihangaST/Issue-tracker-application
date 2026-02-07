@@ -9,6 +9,39 @@ function Dashboard() {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [allIssues, setAllIssues] = useState([]);
 
+  const fetchIssues = async (e) => {
+    e.preventDefault();
+    try {
+      const params = new URLSearchParams({
+        searchTerm,
+        statusFilter,
+        priorityFilter,
+      });
+      const response = await fetch(
+        `http://localhost:5000/api/issues/fetch?${params.toString()}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+      alert("called");
+
+      const data = await response.json();
+      console.log("Fetched issues:", data);
+      if (response.ok) {
+        setAllIssues(data.issues);
+
+        console.log("Issues set in state:", data.issues);
+        alert("Issues fetched successfully!");
+      } else {
+        console.error("Failed to fetch issues:", data.message);
+        alert("Failed to fetch issues: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching issues:", error);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8">
