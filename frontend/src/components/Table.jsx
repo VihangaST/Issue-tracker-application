@@ -1,6 +1,16 @@
 import React from "react";
 
-function Table({ allIssues, handleDeleteIssue }) {
+function Table({
+  allIssues,
+  handleDeleteIssue,
+  currentPage,
+  pageSize,
+  onPageChange,
+}) {
+  const totalPages = Math.ceil(allIssues.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedIssues = allIssues.slice(startIndex, startIndex + pageSize);
+
   return (
     <>
       <table className="table-auto w-full bg-white rounded-lg shadow-md text-left h-1/2">
@@ -17,7 +27,7 @@ function Table({ allIssues, handleDeleteIssue }) {
           </tr>
         </thead>
         <tbody>
-          {allIssues.map((issue) => {
+          {paginatedIssues.map((issue) => {
             let statusColor = "";
             switch (issue.status) {
               case "open":
@@ -79,6 +89,26 @@ function Table({ allIssues, handleDeleteIssue }) {
             );
           })}
         </tbody>
+        {/* Pagination controls */}
+        <div className="flex justify-center items-center mt-4">
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="mx-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </table>
     </>
   );

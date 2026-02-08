@@ -22,6 +22,10 @@ function Dashboard() {
     priority: "medium",
   });
 
+  // pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
+
   // fetch issues based on search and filter
   const fetchIssues = async (e) => {
     e.preventDefault();
@@ -132,7 +136,7 @@ function Dashboard() {
           {/* status filter */}
           <SelectComponent
             filter={statusFilter}
-            onchange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => setStatusFilter(e.target.value)}
             name="status"
             options={[
               { label: "Select Status", value: "" },
@@ -159,7 +163,13 @@ function Dashboard() {
           <Button onClickFunction={handleReset} name={"Reset"} />
         </div>
         <div className="w-full flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
-          <Table allIssues={allIssues} handleDeleteIssue={handleDeleteIssue} />
+          <Table
+            allIssues={allIssues}
+            handleDeleteIssue={handleDeleteIssue}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+          />
         </div>
         <Button
           onClickFunction={() => setShowModal(true)}
