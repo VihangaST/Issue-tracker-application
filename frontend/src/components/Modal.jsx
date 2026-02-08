@@ -1,0 +1,134 @@
+import React from "react";
+import SelectComponent from "./SelectComponent";
+
+const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
+  if (!show) return null;
+
+  const handleChange = (e) => {
+    console.log(
+      "Handling change for:",
+      e.target.name,
+      "with value:",
+      e.target.value,
+    );
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  return (
+    <div style={backdropStyle}>
+      <div style={modalStyle}>
+        <button
+          onClick={onClose}
+          style={closeButtonStyle}
+          aria-label="Close"
+          type="button"
+        >
+          &times;
+        </button>
+        <form
+          className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
+          onSubmit={onSubmit}
+        >
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+            {title}
+          </h2>
+
+          <div className="mb-4">
+            <label htmlFor="title" className="block text-gray-700 mb-2">
+              Issue Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="description" className="block text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="status" className="block text-gray-700 mb-2">
+              Status
+            </label>
+            <SelectComponent
+              filter={formData.status}
+              handleChange={handleChange}
+              name="status"
+              options={[
+                { label: "Open", value: "open" },
+                { label: "In Progress", value: "in_progress" },
+                { label: "Closed", value: "closed" },
+              ]}
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="priority" className="block text-gray-700 mb-2">
+              Priority
+            </label>
+            <SelectComponent
+              filter={formData.priority}
+              handleChange={handleChange}
+              name="priority"
+              options={[
+                { label: "Low", value: "low" },
+                { label: "Medium", value: "medium" },
+                { label: "High", value: "high" },
+              ]}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
+          >
+            {title}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const backdropStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100vw",
+  height: "100vh",
+  background: "rgba(0,0,0,0.3)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 1000,
+};
+
+const modalStyle = {
+  background: "#fff",
+  padding: 24,
+  borderRadius: 8,
+  minWidth: 320,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+};
+
+const closeButtonStyle = {
+  background: "none",
+  border: "none",
+  fontSize: 24,
+  cursor: "pointer",
+  lineHeight: 1,
+  color: "#333",
+};
+export default Modal;

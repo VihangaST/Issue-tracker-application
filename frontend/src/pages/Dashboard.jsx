@@ -2,6 +2,7 @@ import React from "react";
 import Table from "../components/Table";
 import SelectComponent from "../components/SelectComponent";
 import { useState } from "react";
+import Modal from "../components/Modal";
 import Button from "../components/Button";
 
 function Dashboard() {
@@ -10,6 +11,18 @@ function Dashboard() {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [allIssues, setAllIssues] = useState([]);
 
+  // modal
+  const [showModal, setShowModal] = useState(false);
+
+  // add new formdata
+  const [formData, setFormData] = React.useState({
+    title: "",
+    description: "",
+    status: "open",
+    priority: "medium",
+  });
+
+  // fetch issues based on search and filter
   const fetchIssues = async (e) => {
     e.preventDefault();
     try {
@@ -31,6 +44,7 @@ function Dashboard() {
       console.log("Fetched issues:", data);
       if (response.ok) {
         setAllIssues(data.issues);
+        setShowModal(false);
 
         console.log("Issues set in state:", data.issues);
         alert("Issues fetched successfully!");
@@ -43,6 +57,32 @@ function Dashboard() {
     }
   };
 
+  // handle AddNewIssue
+  const handleAddNewIssue = () => {
+    try {
+      const response = fetch("http://localhost:5000/api/issues/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formData,
+        }),
+      });
+      if (response.ok) {
+        alert("Issue added successfully!");
+        fetchIssues(new Event("submit"));
+      }
+      setFormData({
+        title: "",
+        description: "",
+        status: "open",
+        priority: "medium",
+      });
+    } catch (error) {
+      console.error("Error adding new issue:", error);
+    }
+  };
+
+  // handleReset function
   const handleReset = () => {
     setSearchTerm("");
     setStatusFilter("");
@@ -95,6 +135,23 @@ function Dashboard() {
         <div className="w-full flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <Table allIssues={allIssues} />
         </div>
+        <Button
+          onClickFunction={() => setShowModal(true)}
+          name={"Add New Issue"}
+        />
+        {showModal && (
+          <Modal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleAddNewIssue();
+            }}
+            formData={formData}
+            setFormData={setFormData}
+            title="Add New Issue"
+          ></Modal>
+        )}
       </div>
     </>
   );
