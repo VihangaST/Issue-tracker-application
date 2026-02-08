@@ -14,9 +14,7 @@ export const fetchIssues = async (req, res) => {
     if (priorityFilter) where.priority = priorityFilter;
     if (userId) where.userId = userId;
     if (searchTerm) {
-      where[Sequelize.Op.or] = [
-        { title: { [Sequelize.Op.iLike]: `%${searchTerm}%` } },
-      ];
+      where.title = { [Sequelize.Op.like]: `%${searchTerm}%` };
     }
     console.log("Constructed where clause for issue fetch:", where);
 
