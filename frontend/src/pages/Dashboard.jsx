@@ -14,6 +14,14 @@ function Dashboard() {
   // modal
   const [showModal, setShowModal] = useState(false);
 
+  // add new formdata
+  const [formData, setFormData] = React.useState({
+    title: "",
+    description: "",
+    status: "open",
+    priority: "medium",
+  });
+
   // fetch issues based on search and filter
   const fetchIssues = async (e) => {
     e.preventDefault();
@@ -36,6 +44,7 @@ function Dashboard() {
       console.log("Fetched issues:", data);
       if (response.ok) {
         setAllIssues(data.issues);
+        setShowModal(false);
 
         console.log("Issues set in state:", data.issues);
         alert("Issues fetched successfully!");
@@ -45,6 +54,31 @@ function Dashboard() {
       }
     } catch (error) {
       console.error("Error fetching issues:", error);
+    }
+  };
+
+  // handle AddNewIssue
+  const handleAddNewIssue = () => {
+    try {
+      const response = fetch("http://localhost:5000/api/issues/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formData,
+        }),
+      });
+      if (response.ok) {
+        alert("Issue added successfully!");
+        fetchIssues(new Event("submit"));
+      }
+      setFormData({
+        title: "",
+        description: "",
+        status: "open",
+        priority: "medium",
+      });
+    } catch (error) {
+      console.error("Error adding new issue:", error);
     }
   };
 
@@ -111,9 +145,10 @@ function Dashboard() {
             onClose={() => setShowModal(false)}
             onSubmit={(e) => {
               e.preventDefault();
-
-              setShowModal(false);
+              handleAddNewIssue();
             }}
+            formData={formData}
+            setFormData={setFormData}
             title="Add New Issue"
           ></Modal>
         )}

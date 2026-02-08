@@ -1,15 +1,8 @@
 import React from "react";
 import SelectComponent from "./SelectComponent";
 
-const Modal = ({ show, onClose, onSubmit, title }) => {
+const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
   if (!show) return null;
-
-  const [formData, setFormData] = React.useState({
-    title: "",
-    description: "",
-    status: "open",
-    priority: "medium",
-  });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
