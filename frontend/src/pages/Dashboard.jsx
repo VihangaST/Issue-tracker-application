@@ -2,6 +2,7 @@ import React from "react";
 import Table from "../components/Table";
 import SelectComponent from "../components/SelectComponent";
 import { useState } from "react";
+import Modal from "../components/Modal";
 import Button from "../components/Button";
 
 function Dashboard() {
@@ -10,6 +11,10 @@ function Dashboard() {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [allIssues, setAllIssues] = useState([]);
 
+  // modal
+  const [showModal, setShowModal] = useState(false);
+
+  // fetch issues based on search and filter
   const fetchIssues = async (e) => {
     e.preventDefault();
     try {
@@ -43,6 +48,7 @@ function Dashboard() {
     }
   };
 
+  // handleReset function
   const handleReset = () => {
     setSearchTerm("");
     setStatusFilter("");
@@ -95,6 +101,22 @@ function Dashboard() {
         <div className="w-full flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <Table allIssues={allIssues} />
         </div>
+        <Button
+          onClickFunction={() => setShowModal(true)}
+          name={"Add New Issue"}
+        />
+        {showModal && (
+          <Modal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmit={(e) => {
+              e.preventDefault();
+
+              setShowModal(false);
+            }}
+            title="Add New Issue"
+          ></Modal>
+        )}
       </div>
     </>
   );
