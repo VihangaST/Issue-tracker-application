@@ -69,8 +69,8 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
               name="status"
               options={[
                 { label: "Open", value: "open" },
-                { label: "In Progress", value: "in_progress" },
-                { label: "Closed", value: "closed" },
+                { label: "In Progress", value: "in progress" },
+                { label: "Resolved", value: "resolved" },
               ]}
             />
           </div>

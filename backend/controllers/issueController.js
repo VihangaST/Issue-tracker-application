@@ -27,3 +27,28 @@ export const fetchIssues = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
+
+export const addIssue = async (req, res) => {
+  try {
+    const { title, description, status, priority } = req.body.formData;
+    console.log("Received issue data:", {
+      title,
+      description,
+      status,
+      priority,
+    });
+    const userId = "1";
+    const newIssue = await Issue.create({
+      title,
+      description,
+      status,
+      priority,
+      userId,
+    });
+    res
+      .status(201)
+      .json({ message: "Issue added successfully", issue: newIssue });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+};
