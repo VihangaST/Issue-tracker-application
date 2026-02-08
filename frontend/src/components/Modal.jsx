@@ -5,6 +5,12 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
   if (!show) return null;
 
   const handleChange = (e) => {
+    console.log(
+      "Handling change for:",
+      e.target.name,
+      "with value:",
+      e.target.value,
+    );
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   return (
@@ -59,6 +65,8 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
             </label>
             <SelectComponent
               filter={formData.status}
+              handleChange={handleChange}
+              name="status"
               options={[
                 { label: "Open", value: "open" },
                 { label: "In Progress", value: "in_progress" },
@@ -72,6 +80,8 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
             </label>
             <SelectComponent
               filter={formData.priority}
+              handleChange={handleChange}
+              name="priority"
               options={[
                 { label: "Low", value: "low" },
                 { label: "Medium", value: "medium" },
