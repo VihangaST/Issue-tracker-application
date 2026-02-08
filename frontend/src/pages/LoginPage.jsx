@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthForm from "../components/AuthForm";
 function LoginPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const fields = [
+    { name: "email", label: "Email", type: "email", required: true },
+    { name: "password", label: "Password", type: "password", required: true },
+  ];
 
   const handleClear = () => {
     setFormData({
@@ -47,7 +53,7 @@ function LoginPage() {
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <form
+        {/* <form
           className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
           onSubmit={handleLogin}
         >
@@ -89,7 +95,16 @@ function LoginPage() {
           >
             Login
           </button>
-        </form>
+        </form> */}
+        <AuthForm
+          fields={fields}
+          values={formData}
+          onChange={handleChange}
+          onSubmit={handleLogin}
+          handleClear={handleClear}
+          buttonText="Login"
+          title="Login"
+        />
       </div>
     </>
   );

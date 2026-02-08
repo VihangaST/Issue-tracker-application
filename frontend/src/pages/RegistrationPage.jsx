@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import AuthForm from "../components/AuthForm";
 
 function RegistrationPage() {
   const navigate = useNavigate();
@@ -9,6 +10,16 @@ function RegistrationPage() {
     password: "",
     confirmPassword: "",
   });
+  const fields = [
+    { name: "email", label: "Email", type: "email", required: true },
+    { name: "password", label: "Password", type: "password", required: true },
+    {
+      name: "confirmPassword",
+      label: "Confirm Password",
+      type: "password",
+      required: true,
+    },
+  ];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,11 +59,19 @@ function RegistrationPage() {
     }
   };
 
+  const handleClear = () => {
+    setFormData({
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
+
   return (
     <>
       <>
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
-          <form
+          {/* <form
             className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
             onSubmit={handleRegistration}
           >
@@ -111,7 +130,16 @@ function RegistrationPage() {
             >
               Register
             </button>
-          </form>
+          </form> */}
+          <AuthForm
+            fields={fields}
+            values={formData}
+            onChange={handleChange}
+            onSubmit={handleRegistration}
+            handleClear={handleClear}
+            buttonText="Register"
+            title="Register"
+          />
         </div>
       </>
     </>
