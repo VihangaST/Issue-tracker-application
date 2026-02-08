@@ -109,6 +109,7 @@ function Dashboard() {
           <SelectComponent
             filter={statusFilter}
             onchange={(e) => setStatusFilter(e.target.value)}
+            name="status"
             options={[
               { label: "Select Status", value: "" },
               { label: "Open", value: "open" },
@@ -119,13 +120,14 @@ function Dashboard() {
           {/* priority filter */}
           <SelectComponent
             filter={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+            name="priority"
             options={[
               { label: "Select Priority", value: "" },
               { label: "High", value: "high" },
               { label: "Medium", value: "medium" },
               { label: "Low", value: "low" },
             ]}
-            onchange={(e) => setPriorityFilter(e.target.value)}
           />
           {/* search button */}
           <Button onClickFunction={fetchIssues} name={"Search"} />
