@@ -52,3 +52,18 @@ export const addIssue = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
+
+export const deleteIssue = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Received request to delete issue with ID:", id);
+    const deleted = await Issue.destroy({ where: { id } });
+    if (deleted) {
+      res.status(200).json({ message: "Issue deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Issue not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+};

@@ -22,6 +22,10 @@ function Dashboard() {
     priority: "medium",
   });
 
+  // pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
+
   // fetch issues based on search and filter
   const fetchIssues = async (e) => {
     e.preventDefault();
@@ -90,6 +94,30 @@ function Dashboard() {
     setAllIssues([]);
   };
 
+  // handleDeleteIssue function
+  const handleDeleteIssue = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this issue?")) {
+      return;
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/issues/delete/${id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+      if (response.ok) {
+        alert("Issue deleted successfully!");
+      } else {
+        alert("Failed to delete issue");
+      }
+    } catch (error) {
+      console.error("Error deleting issue:", error);
+      alert("Error deleting issue: " + error.message);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8">
@@ -108,7 +136,7 @@ function Dashboard() {
           {/* status filter */}
           <SelectComponent
             filter={statusFilter}
-            onchange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => setStatusFilter(e.target.value)}
             name="status"
             options={[
               { label: "Select Status", value: "" },
@@ -135,7 +163,13 @@ function Dashboard() {
           <Button onClickFunction={handleReset} name={"Reset"} />
         </div>
         <div className="w-full flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
-          <Table allIssues={allIssues} />
+          <Table
+            allIssues={allIssues}
+            handleDeleteIssue={handleDeleteIssue}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+          />
         </div>
         <Button
           onClickFunction={() => setShowModal(true)}
