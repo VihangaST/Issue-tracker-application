@@ -1,21 +1,19 @@
 import React from "react";
 
-function Table({ allIssues }) {
+function Table({ allIssues, handleDeleteIssue }) {
   return (
     <>
       <table className="table-auto w-full bg-white rounded-lg shadow-md text-left h-1/2">
         <thead>
           <tr className="h-8 bg-gray-200">
-            {["ID", "Title", "Description", "Status", "Priority"].map(
-              (header) => (
-                <th
-                  key={header}
-                  className="px-4 py-2 text-gray-700 font-semibold"
-                >
-                  {header}
-                </th>
-              ),
-            )}
+            {["ID", "Title", "Status", "Priority", "Delete"].map((header) => (
+              <th
+                key={header}
+                className="px-4 py-2 text-gray-700 font-semibold"
+              >
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -54,7 +52,7 @@ function Table({ allIssues }) {
               <tr key={issue.id} className="h-8">
                 <td>{issue.id}</td>
                 <td>{issue.title}</td>
-                <td>{issue.description}</td>
+                {/* <td>{issue.description}</td> */}
                 <td>
                   <span
                     className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring inset-ring-gray-400/20 ${statusColor}`}
@@ -68,6 +66,14 @@ function Table({ allIssues }) {
                   >
                     {issue.priority}
                   </span>
+                </td>
+                <td>
+                  <button
+                    className="px-2 py-1 rounded bg-red-500 text-white text-xs font-semibold hover:bg-red-600"
+                    onClick={() => handleDeleteIssue(issue.id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             );
