@@ -2,6 +2,7 @@ import React from "react";
 import Table from "../components/Table";
 import SelectComponent from "../components/SelectComponent";
 import { useState } from "react";
+import Button from "../components/Button";
 
 function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,6 +43,13 @@ function Dashboard() {
     }
   };
 
+  const handleReset = () => {
+    setSearchTerm("");
+    setStatusFilter("");
+    setPriorityFilter("");
+    setAllIssues([]);
+  };
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8">
@@ -79,12 +87,10 @@ function Dashboard() {
             ]}
             onchange={(e) => setPriorityFilter(e.target.value)}
           />
-          <button
-            className="mb-4 p-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600 w-full md:w-auto"
-            onClick={fetchIssues}
-          >
-            Search
-          </button>
+          {/* search button */}
+          <Button onClickFunction={fetchIssues} name={"Search"} />
+          {/* reset button */}
+          <Button onClickFunction={handleReset} name={"Reset"} />
         </div>
         <div className="w-full flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <Table allIssues={allIssues} />
