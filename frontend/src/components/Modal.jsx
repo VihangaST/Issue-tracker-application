@@ -2,16 +2,9 @@ import React from "react";
 import SelectComponent from "./SelectComponent";
 import useFormStore from "../store/useFormStore";
 
-const Modal = ({
-  show,
-  onClose,
-  onSubmit,
-  formData,
-  setFormData,
-  title,
-  isEdit,
-  setIsEdit,
-}) => {
+const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
+  const isEdit = useFormStore((state) => state.isEdit);
+  const setIsEdit = useFormStore((state) => state.setIsEdit);
   if (!show) return null;
 
   const handleChange = (e) => {
@@ -98,7 +91,7 @@ const Modal = ({
             />
           </div>
           {/* Show Edit button in view mode */}
-          {!isEdit && setIsEdit && (
+          {!isEdit && (
             <button
               type="button"
               className="mb-4 w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition-colors font-semibold"

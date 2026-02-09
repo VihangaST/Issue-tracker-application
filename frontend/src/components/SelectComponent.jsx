@@ -1,6 +1,9 @@
 import React from "react";
+import useFormStore from "../store/useFormStore";
 
-function SelectComponent({ filter, onChange, name, options, isEdit }) {
+function SelectComponent({ filter, onChange, name, options }) {
+  const isEdit = useFormStore((state) => state.isEdit);
+
   return (
     <>
       <select
