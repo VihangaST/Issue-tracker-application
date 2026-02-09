@@ -9,7 +9,8 @@ import Button from "../components/Button";
 function Dashboard() {
   // For editing/viewing an issue in modal
   const [selectedIssue, setSelectedIssue] = useState(null);
-  const [isEdit, setIsEdit] = useState(false);
+  const isEdit = useFormStore((state) => state.isEdit);
+  const setIsEdit = useFormStore((state) => state.setIsEdit);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
@@ -30,7 +31,6 @@ function Dashboard() {
 
   useEffect(() => {
     fetchIssues({ preventDefault: () => {} });
-    // eslint-disable-next-line
   }, [currentPage]);
 
   // fetch issues based on search and filter
