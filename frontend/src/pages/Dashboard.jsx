@@ -1,7 +1,7 @@
 import React from "react";
 import Table from "../components/Table";
 import SelectComponent from "../components/SelectComponent";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 
@@ -10,6 +10,7 @@ function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [allIssues, setAllIssues] = useState([]);
+  const [totalIssues, setTotalIssues] = useState(0);
 
   // modal
   const [showModal, setShowModal] = useState(false);
@@ -24,16 +25,23 @@ function Dashboard() {
 
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 10;
+
+  useEffect(() => {
+    fetchIssues({ preventDefault: () => {} });
+    // eslint-disable-next-line
+  }, [currentPage]);
 
   // fetch issues based on search and filter
   const fetchIssues = async (e) => {
-    e.preventDefault();
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
     try {
       const params = new URLSearchParams({
         searchTerm,
         statusFilter,
         priorityFilter,
+        page: currentPage,
+        pageSize,
       });
       const response = await fetch(
         `http://localhost:5000/api/issues/fetch?${params.toString()}`,
@@ -48,6 +56,7 @@ function Dashboard() {
       console.log("Fetched issues:", data);
       if (response.ok) {
         setAllIssues(data.issues);
+        setTotalIssues(data.totalIssueCount || 0);
         setShowModal(false);
 
         console.log("Issues set in state:", data.issues);
@@ -92,6 +101,8 @@ function Dashboard() {
     setStatusFilter("");
     setPriorityFilter("");
     setAllIssues([]);
+    setTotalIssues(0);
+    setCurrentPage(1);
   };
 
   // handleDeleteIssue function
@@ -162,7 +173,7 @@ function Dashboard() {
           {/* reset button */}
           <Button onClickFunction={handleReset} name={"Reset"} />
         </div>
-        <div className="w-full flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
+        <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <Table
             allIssues={allIssues}
             handleDeleteIssue={handleDeleteIssue}
@@ -170,6 +181,24 @@ function Dashboard() {
             pageSize={pageSize}
             onPageChange={setCurrentPage}
           />
+          {/* Pagination Controls */}
+          {totalIssues > 0 && (
+            <div className="flex justify-center mt-4">
+              {Array.from(
+                { length: Math.ceil(totalIssues / pageSize) },
+                (_, i) => (
+                  <button
+                    key={i + 1}
+                    className={`mx-1 px-3 py-1 rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white text-blue-500 border border-blue-500"}`}
+                    onClick={() => setCurrentPage(i + 1)}
+                    disabled={currentPage === i + 1}
+                  >
+                    {i + 1}
+                  </button>
+                ),
+              )}
+            </div>
+          )}
         </div>
         <Button
           onClickFunction={() => setShowModal(true)}
