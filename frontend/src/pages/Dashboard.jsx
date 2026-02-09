@@ -5,12 +5,12 @@ import { useState, useEffect } from "react";
 import useFormStore from "../store/useFormStore";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
+import { BASE_URL } from "../config";
 
 function Dashboard() {
   // For editing/viewing an issue in modal
   const [selectedIssue, setSelectedIssue] = useState(null);
-  const isEdit = useFormStore((state) => state.isEdit);
-  const setIsEdit = useFormStore((state) => state.setIsEdit);
+  const [isEdit, setIsEdit] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
@@ -45,7 +45,7 @@ function Dashboard() {
         pageSize,
       });
       const response = await fetch(
-        `http://localhost:5000/api/issues/fetch?${params.toString()}`,
+        `${BASE_URL}/api/issues/fetch?${params.toString()}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -74,7 +74,7 @@ function Dashboard() {
   // handle AddNewIssue
   const handleAddNewIssue = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/issues/add", {
+      const response = await fetch(`${BASE_URL}/api/issues/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -107,13 +107,10 @@ function Dashboard() {
       return;
     }
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/issues/delete/${id}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      const response = await fetch(`${BASE_URL}/api/issues/delete/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
       if (response.ok) {
         alert("Issue deleted successfully!");
       } else {
@@ -141,7 +138,7 @@ function Dashboard() {
   const handleUpdateIssue = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/issues/update/${selectedIssue.id}`,
+        `${BASE_URL}/api/issues/update/${selectedIssue.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
