@@ -1,6 +1,6 @@
 import React from "react";
 
-function SelectComponent({ filter, onChange, name, options }) {
+function SelectComponent({ filter, onChange, name, options, isEdit }) {
   return (
     <>
       <select
@@ -8,6 +8,7 @@ function SelectComponent({ filter, onChange, name, options }) {
         value={filter}
         name={name}
         onChange={onChange}
+        disabled={!isEdit}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

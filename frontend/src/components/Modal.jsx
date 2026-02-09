@@ -1,7 +1,16 @@
 import React from "react";
 import SelectComponent from "./SelectComponent";
 
-const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
+const Modal = ({
+  show,
+  onClose,
+  onSubmit,
+  formData,
+  setFormData,
+  title,
+  isEdit,
+  setIsEdit,
+}) => {
   if (!show) return null;
 
   const handleChange = (e) => {
@@ -44,6 +53,7 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
+              readOnly={!isEdit}
             />
           </div>
           <div className="mb-6">
@@ -57,6 +67,7 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
+              readOnly={!isEdit}
             />
           </div>
           <div className="mb-6">
@@ -65,13 +76,14 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
             </label>
             <SelectComponent
               filter={formData.status}
-              handleChange={handleChange}
+              onChange={handleChange}
               name="status"
               options={[
                 { label: "Open", value: "open" },
                 { label: "In Progress", value: "in progress" },
                 { label: "Resolved", value: "resolved" },
               ]}
+              isEdit={isEdit}
             />
           </div>
           <div className="mb-6">
@@ -80,22 +92,35 @@ const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
             </label>
             <SelectComponent
               filter={formData.priority}
-              handleChange={handleChange}
+              onChange={handleChange}
               name="priority"
               options={[
                 { label: "Low", value: "low" },
                 { label: "Medium", value: "medium" },
                 { label: "High", value: "high" },
               ]}
+              isEdit={isEdit}
             />
           </div>
+          {/* Show Edit button in view mode */}
+          {!isEdit && setIsEdit && (
+            <button
+              type="button"
+              className="mb-4 w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition-colors font-semibold"
+              onClick={() => setIsEdit(true)}
+            >
+              Edit
+            </button>
+          )}
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
-          >
-            {title}
-          </button>
+          {isEdit && (
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
+            >
+              Update
+            </button>
+          )}
         </form>
       </div>
     </div>

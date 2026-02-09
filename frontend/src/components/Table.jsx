@@ -1,12 +1,6 @@
 import React from "react";
 
-function Table({
-  allIssues,
-  handleDeleteIssue,
-  currentPage,
-  pageSize,
-  onPageChange,
-}) {
+function Table({ allIssues, handleDeleteIssue, onRowClick }) {
   // Fixed row count
   const ROW_COUNT = 10;
   const rowHeight = 32;
@@ -64,7 +58,16 @@ function Table({
                 priorityColor = "bg-gray-400/10 text-gray-400";
             }
             return (
-              <tr key={issue.id} className="h-8">
+              <tr
+                key={issue.id}
+                className="h-8 cursor-pointer hover:bg-blue-100 transition-colors"
+                onClick={() => {
+                  // Handle row click to show issue details
+                  if (onRowClick) {
+                    onRowClick(issue);
+                  }
+                }}
+              >
                 <td>{issue.id}</td>
                 <td>{issue.title}</td>
                 <td>
@@ -84,7 +87,10 @@ function Table({
                 <td>
                   <button
                     className="px-2 py-1 rounded bg-red-500 text-white text-xs font-semibold hover:bg-red-600"
-                    onClick={() => handleDeleteIssue(issue.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteIssue(issue.id);
+                    }}
                   >
                     Delete
                   </button>

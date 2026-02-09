@@ -6,6 +6,9 @@ import Modal from "../components/Modal";
 import Button from "../components/Button";
 
 function Dashboard() {
+  // For editing/viewing an issue in modal
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
@@ -129,6 +132,50 @@ function Dashboard() {
     }
   };
 
+  // Handle row click to open modal with issue data
+  const handleRowClick = (issue) => {
+    setSelectedIssue(issue);
+    setFormData({
+      title: issue.title,
+      description: issue.description,
+      status: issue.status,
+      priority: issue.priority,
+    });
+    setIsEdit(false);
+    setShowModal(true);
+  };
+
+  const handleUpdateIssue = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/issues/update/${selectedIssue.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            formData,
+          }),
+        },
+      );
+
+      if (response.ok) {
+        alert("Issue updated successfully!");
+        // fetchIssues(new Event("submit"));
+      } else {
+        const data = await response.json();
+        console.error("Failed to update issue:", data.message);
+        alert("Failed to update issue");
+      }
+    } catch (error) {
+      console.error("Error updating issue:", error);
+      alert("Error updating issue: " + error.message);
+    }
+
+    alert("Update issue functionality");
+    setIsEdit(false);
+    setShowModal(false);
+  };
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8">
@@ -155,6 +202,7 @@ function Dashboard() {
               { label: "In progress", value: "in progress" },
               { label: "Resolved", value: "resolved" },
             ]}
+            isEdit={true}
           />
           {/* priority filter */}
           <SelectComponent
@@ -167,6 +215,7 @@ function Dashboard() {
               { label: "Medium", value: "medium" },
               { label: "Low", value: "low" },
             ]}
+            isEdit={true}
           />
           {/* search button */}
           <Button onClickFunction={fetchIssues} name={"Search"} />
@@ -180,6 +229,7 @@ function Dashboard() {
             currentPage={currentPage}
             pageSize={pageSize}
             onPageChange={setCurrentPage}
+            onRowClick={handleRowClick}
           />
           {/* Pagination Controls */}
           {totalIssues > 0 && (
@@ -201,7 +251,17 @@ function Dashboard() {
           )}
         </div>
         <Button
-          onClickFunction={() => setShowModal(true)}
+          onClickFunction={() => {
+            setShowModal(true);
+            setSelectedIssue(null);
+            setFormData({
+              title: "",
+              description: "",
+              status: "open",
+              priority: "medium",
+            });
+            setIsEdit(true);
+          }}
           name={"Add New Issue"}
         />
         {showModal && (
@@ -210,11 +270,23 @@ function Dashboard() {
             onClose={() => setShowModal(false)}
             onSubmit={(e) => {
               e.preventDefault();
-              handleAddNewIssue();
+              if (selectedIssue && isEdit) {
+                handleUpdateIssue();
+              } else if (!selectedIssue) {
+                handleAddNewIssue();
+              }
             }}
             formData={formData}
             setFormData={setFormData}
-            title="Add New Issue"
+            title={
+              selectedIssue
+                ? isEdit
+                  ? "Edit Issue"
+                  : "View Issue"
+                : "Add New Issue"
+            }
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
           ></Modal>
         )}
       </div>
