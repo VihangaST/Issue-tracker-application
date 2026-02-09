@@ -1,5 +1,6 @@
 import React from "react";
 import SelectComponent from "./SelectComponent";
+import useFormStore from "../store/useFormStore";
 
 const Modal = ({
   show,
@@ -14,12 +15,6 @@ const Modal = ({
   if (!show) return null;
 
   const handleChange = (e) => {
-    console.log(
-      "Handling change for:",
-      e.target.name,
-      "with value:",
-      e.target.value,
-    );
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   return (

@@ -2,6 +2,7 @@ import React from "react";
 import Table from "../components/Table";
 import SelectComponent from "../components/SelectComponent";
 import { useState, useEffect } from "react";
+import useFormStore from "../store/useFormStore";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 
@@ -18,13 +19,10 @@ function Dashboard() {
   // modal
   const [showModal, setShowModal] = useState(false);
 
-  // add new formdata
-  const [formData, setFormData] = React.useState({
-    title: "",
-    description: "",
-    status: "open",
-    priority: "medium",
-  });
+  // Zustand form state
+  const formData = useFormStore((state) => state.formData);
+  const setFormData = useFormStore((state) => state.setFormData);
+  const resetFormData = useFormStore((state) => state.resetFormData);
 
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,9 +72,9 @@ function Dashboard() {
   };
 
   // handle AddNewIssue
-  const handleAddNewIssue = () => {
+  const handleAddNewIssue = async () => {
     try {
-      const response = fetch("http://localhost:5000/api/issues/add", {
+      const response = await fetch("http://localhost:5000/api/issues/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,12 +85,7 @@ function Dashboard() {
         alert("Issue added successfully!");
         fetchIssues(new Event("submit"));
       }
-      setFormData({
-        title: "",
-        description: "",
-        status: "open",
-        priority: "medium",
-      });
+      resetFormData();
     } catch (error) {
       console.error("Error adding new issue:", error);
     }
