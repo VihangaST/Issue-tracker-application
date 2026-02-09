@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import bcrypt from "bcrypt";
 
 export const loginUser = async (req, res) => {
   try {
@@ -8,7 +9,12 @@ export const loginUser = async (req, res) => {
 
     const user = await User.findOne({ where: { email } });
 
-    if (!user || user.password !== password) {
+    if (!user) {
+      return res.status(404).json({ message: "Invalid email or password" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
       return res.status(404).json({ message: "Invalid email or password" });
     }
 
@@ -40,7 +46,19 @@ export const registerUser = async (req, res) => {
         .status(400)
         .json({ message: "Already registered with this email" });
     }
-    const newUser = await User.create({ email, password, confirmPassword });
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      confirmPassword,
+    });
     res.status(201).json({
       message: "User registered successfully",
       user: {
