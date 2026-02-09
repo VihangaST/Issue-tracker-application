@@ -6,6 +6,9 @@ import Modal from "../components/Modal";
 import Button from "../components/Button";
 
 function Dashboard() {
+  // For editing/viewing an issue in modal
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
@@ -129,6 +132,23 @@ function Dashboard() {
     }
   };
 
+  // Handle row click to open modal with issue data
+  const handleRowClick = (issue) => {
+    setSelectedIssue(issue);
+    setFormData({
+      title: issue.title,
+      description: issue.description,
+      status: issue.status,
+      priority: issue.priority,
+    });
+    setShowModal(true);
+  };
+
+  const handleEditIssue = async () => {
+    setIsEdit(true);
+    alert("Edit issue functionality not implemented yet");
+  };
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8">
@@ -180,6 +200,7 @@ function Dashboard() {
             currentPage={currentPage}
             pageSize={pageSize}
             onPageChange={setCurrentPage}
+            onRowClick={handleRowClick}
           />
           {/* Pagination Controls */}
           {totalIssues > 0 && (
@@ -201,7 +222,16 @@ function Dashboard() {
           )}
         </div>
         <Button
-          onClickFunction={() => setShowModal(true)}
+          onClickFunction={() => {
+            setShowModal(true);
+            setSelectedIssue(null);
+            setFormData({
+              title: "",
+              description: "",
+              status: "open",
+              priority: "medium",
+            });
+          }}
           name={"Add New Issue"}
         />
         {showModal && (
@@ -210,11 +240,17 @@ function Dashboard() {
             onClose={() => setShowModal(false)}
             onSubmit={(e) => {
               e.preventDefault();
-              handleAddNewIssue();
+              if (selectedIssue) {
+                handleEditIssue();
+              } else {
+                handleAddNewIssue();
+              }
             }}
             formData={formData}
             setFormData={setFormData}
-            title="Add New Issue"
+            title={selectedIssue ? `Edit Issue` : "Add New Issue"}
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
           ></Modal>
         )}
       </div>
