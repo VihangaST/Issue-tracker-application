@@ -102,13 +102,25 @@ const Modal = ({
               isEdit={isEdit}
             />
           </div>
+          {/* Show Edit button in view mode */}
+          {!isEdit && setIsEdit && (
+            <button
+              type="button"
+              className="mb-4 w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition-colors font-semibold"
+              onClick={() => setIsEdit(true)}
+            >
+              Edit
+            </button>
+          )}
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
-          >
-            {title}
-          </button>
+          {isEdit && (
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
+            >
+              Update
+            </button>
+          )}
         </form>
       </div>
     </div>

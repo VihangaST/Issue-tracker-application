@@ -141,12 +141,15 @@ function Dashboard() {
       status: issue.status,
       priority: issue.priority,
     });
+    setIsEdit(false);
     setShowModal(true);
   };
 
-  const handleEditIssue = async () => {
-    setIsEdit(true);
-    alert("Edit issue functionality not implemented yet");
+  const handleUpdateIssue = async () => {
+    // Implement your update API call here
+    alert("Update issue functionality");
+    setIsEdit(false);
+    setShowModal(false);
   };
 
   return (
@@ -175,6 +178,7 @@ function Dashboard() {
               { label: "In progress", value: "in progress" },
               { label: "Resolved", value: "resolved" },
             ]}
+            isEdit={true}
           />
           {/* priority filter */}
           <SelectComponent
@@ -187,6 +191,7 @@ function Dashboard() {
               { label: "Medium", value: "medium" },
               { label: "Low", value: "low" },
             ]}
+            isEdit={true}
           />
           {/* search button */}
           <Button onClickFunction={fetchIssues} name={"Search"} />
@@ -231,6 +236,7 @@ function Dashboard() {
               status: "open",
               priority: "medium",
             });
+            setIsEdit(true);
           }}
           name={"Add New Issue"}
         />
@@ -240,15 +246,21 @@ function Dashboard() {
             onClose={() => setShowModal(false)}
             onSubmit={(e) => {
               e.preventDefault();
-              if (selectedIssue) {
-                handleEditIssue();
-              } else {
+              if (selectedIssue && isEdit) {
+                handleUpdateIssue();
+              } else if (!selectedIssue) {
                 handleAddNewIssue();
               }
             }}
             formData={formData}
             setFormData={setFormData}
-            title={selectedIssue ? `Edit Issue` : "Add New Issue"}
+            title={
+              selectedIssue
+                ? isEdit
+                  ? "Edit Issue"
+                  : "View Issue"
+                : "Add New Issue"
+            }
             isEdit={isEdit}
             setIsEdit={setIsEdit}
           ></Modal>
