@@ -76,7 +76,7 @@ const Modal = ({
             </label>
             <SelectComponent
               filter={formData.status}
-              handleChange={handleChange}
+              onChange={handleChange}
               name="status"
               options={[
                 { label: "Open", value: "open" },
@@ -92,7 +92,7 @@ const Modal = ({
             </label>
             <SelectComponent
               filter={formData.priority}
-              handleChange={handleChange}
+              onChange={handleChange}
               name="priority"
               options={[
                 { label: "Low", value: "low" },
