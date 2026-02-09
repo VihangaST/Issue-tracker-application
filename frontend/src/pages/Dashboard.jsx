@@ -146,7 +146,31 @@ function Dashboard() {
   };
 
   const handleUpdateIssue = async () => {
-    // Implement your update API call here
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/issues/update/${selectedIssue.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            formData,
+          }),
+        },
+      );
+
+      if (response.ok) {
+        alert("Issue updated successfully!");
+        // fetchIssues(new Event("submit"));
+      } else {
+        const data = await response.json();
+        console.error("Failed to update issue:", data.message);
+        alert("Failed to update issue");
+      }
+    } catch (error) {
+      console.error("Error updating issue:", error);
+      alert("Error updating issue: " + error.message);
+    }
+
     alert("Update issue functionality");
     setIsEdit(false);
     setShowModal(false);
