@@ -74,7 +74,7 @@ export const addIssue = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
-
+// delete issue
 export const deleteIssue = async (req, res) => {
   try {
     const { id } = req.params;
@@ -82,6 +82,35 @@ export const deleteIssue = async (req, res) => {
     const deleted = await Issue.destroy({ where: { id } });
     if (deleted) {
       res.status(200).json({ message: "Issue deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Issue not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+};
+
+// update issue
+export const updateIssue = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, status, priority } = req.body.formData;
+    console.log("Received update for issue ID:", id, "with data:", {
+      title,
+      description,
+      status,
+      priority,
+      userId: "1",
+    });
+    const [updated] = await Issue.update(
+      { title, description, status, priority, userId: "1" },
+      { where: { id } },
+    );
+    if (updated) {
+      const updatedIssue = await Issue.findOne({ where: { id } });
+      res
+        .status(200)
+        .json({ message: "Issue updated successfully", issue: updatedIssue });
     } else {
       res.status(404).json({ message: "Issue not found" });
     }
