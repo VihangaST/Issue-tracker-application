@@ -7,13 +7,20 @@ function Table({
   pageSize,
   onPageChange,
 }) {
-  const totalPages = Math.ceil(allIssues.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedIssues = allIssues.slice(startIndex, startIndex + pageSize);
+  // Fixed row count
+  const ROW_COUNT = 10;
+  const rowHeight = 32;
+  const emptyRows = ROW_COUNT - allIssues.length;
 
   return (
     <>
-      <table className="table-auto w-full bg-white rounded-lg shadow-md text-left h-1/2">
+      <table
+        className="table-auto w-full bg-white rounded-lg shadow-md text-left"
+        style={{
+          minHeight: `${ROW_COUNT * rowHeight}px`,
+          height: `${ROW_COUNT * rowHeight}px`,
+        }}
+      >
         <thead>
           <tr className="h-8 bg-gray-200">
             {["ID", "Title", "Status", "Priority", "Delete"].map((header) => (
@@ -27,7 +34,7 @@ function Table({
           </tr>
         </thead>
         <tbody>
-          {paginatedIssues.map((issue) => {
+          {allIssues.map((issue) => {
             let statusColor = "";
             switch (issue.status) {
               case "open":
@@ -46,11 +53,9 @@ function Table({
             switch (issue.priority) {
               case "high":
                 priorityColor = "bg-red-100 text-red-700";
-
                 break;
               case "medium":
                 priorityColor = "bg-yellow-100 text-yellow-700";
-
                 break;
               case "low":
                 priorityColor = "bg-green-100 text-green-700";
@@ -62,7 +67,6 @@ function Table({
               <tr key={issue.id} className="h-8">
                 <td>{issue.id}</td>
                 <td>{issue.title}</td>
-                {/* <td>{issue.description}</td> */}
                 <td>
                   <span
                     className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring inset-ring-gray-400/20 ${statusColor}`}
@@ -88,27 +92,13 @@ function Table({
               </tr>
             );
           })}
+          {emptyRows > 0 &&
+            Array.from({ length: emptyRows }).map((_, idx) => (
+              <tr key={`empty-${idx}`} className="h-8">
+                <td colSpan={5}>&nbsp;</td>
+              </tr>
+            ))}
         </tbody>
-        {/* Pagination controls */}
-        <div className="flex justify-center items-center mt-4">
-          <button
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
-          >
-            Prev
-          </button>
-          <span className="mx-2">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 mx-1 rounded bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
       </table>
     </>
   );
