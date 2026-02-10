@@ -1,6 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 
 function Navbar() {
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <nav className="w-full bg-white shadow-md px-4 py-2 flex items-center justify-between fixed top-0 left-0 z-50">
       <div className="flex items-center">
@@ -15,7 +24,7 @@ function Navbar() {
       </div>
       <button
         className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
-        onClick={() => alert("Logged out!")}
+        onClick={handleLogout}
       >
         Log Out
       </button>
