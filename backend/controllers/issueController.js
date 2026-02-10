@@ -11,7 +11,8 @@ export const fetchIssues = async (req, res) => {
       page = 1,
       pageSize = 10,
     } = req.query;
-    const userId = "1";
+    // Extract userId from JWT middleware (use id from JWT payload)
+    const userId = req.user?.id;
 
     const where = {};
     if (statusFilter) where.status = statusFilter;
@@ -59,7 +60,8 @@ export const addIssue = async (req, res) => {
       status,
       priority,
     });
-    const userId = "1";
+    // Extract userId from JWT middleware (use id from JWT payload)
+    const userId = req.user?.id;
     const newIssue = await Issue.create({
       title,
       description,
@@ -95,15 +97,17 @@ export const updateIssue = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, status, priority } = req.body.formData;
+    // Extract userId from JWT middleware (use id from JWT payload)
+    const userId = req.user?.id;
     console.log("Received update for issue ID:", id, "with data:", {
       title,
       description,
       status,
       priority,
-      userId: "1",
+      userId,
     });
     const [updated] = await Issue.update(
-      { title, description, status, priority, userId: "1" },
+      { title, description, status, priority, userId },
       { where: { id } },
     );
     if (updated) {
