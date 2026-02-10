@@ -50,7 +50,7 @@ export const fetchIssues = async (req, res) => {
   }
 };
 
-// Add issue controller
+// add issue controller
 export const addIssue = async (req, res) => {
   try {
     const { title, description, status, priority } = req.body.formData;
@@ -118,6 +118,32 @@ export const updateIssue = async (req, res) => {
     } else {
       res.status(404).json({ message: "Issue not found" });
     }
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+};
+
+// fetch status counts
+export const statusCounts = async (req, res) => {
+  try {
+    // Extract userId from JWT middleware (use id from JWT payload)
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const statusCounts = await Issue.findAll({
+      where: { userId },
+      attributes: [
+        "status",
+        [Sequelize.fn("COUNT", Sequelize.col("status")), "count"],
+      ],
+      group: ["status"],
+    });
+    console.log("Fetched status counts for user ID:", userId, statusCounts);
+    res
+      .status(200)
+      .json({ message: "Status counts fetched successfully", statusCounts });
   } catch (err) {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
