@@ -199,13 +199,13 @@ function Dashboard() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8 pt-16 pb-4">
+      <div className="min-h-screen flex flex-col items-center justify-start bg-white p-8 pt-16 pb-4">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between bg-gray-100 rounded-lg ">
             <input
               type="text"
               placeholder="Search issues..."
-              className="mb-2 p-2 rounded border border-gray-300 mr-4 w-full md:w-auto"
+              className="mb-2 p-2 rounded border text-gray-700 border-gray-300 mr-4 w-full md:w-auto"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -239,7 +239,6 @@ function Dashboard() {
             <Button onClickFunction={fetchIssues} name={"Search"} />
             {/* reset button */}
             <Button onClickFunction={handleReset} name={"Reset"} />
-            {/* <div className="w-full flex justify-end mb-4"> */}
             <Button
               onClickFunction={() => {
                 setShowModal(true);
@@ -258,8 +257,6 @@ function Dashboard() {
               onClickFunction={() => exportToJSON(allIssues)}
               name={"Export JSON"}
             />
-
-            {/* </div> */}
           </div>{" "}
           <Table
             allIssues={allIssues}
@@ -277,7 +274,7 @@ function Dashboard() {
                 (_, i) => (
                   <button
                     key={i + 1}
-                    className={`mx-1 px-3 py-1 rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white text-blue-500 border border-blue-500"}`}
+                    className={`mx-1 px-3 py-1 rounded bg-cyan-700 hover:bg-cyan-600 ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white text-blue-500 border border-blue-500"}`}
                     onClick={() => setCurrentPage(i + 1)}
                     disabled={currentPage === i + 1}
                   >
