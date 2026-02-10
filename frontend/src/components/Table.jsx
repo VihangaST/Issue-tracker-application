@@ -7,9 +7,9 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
   const emptyRows = ROW_COUNT - allIssues.length;
 
   return (
-    <>
+    <div className="w-full overflow-x-auto">
       <table
-        className="table-auto w-full bg-white rounded-lg shadow-md text-left"
+        className="table-auto min-w-full bg-white rounded-lg shadow-md text-left"
         style={{
           minHeight: `${ROW_COUNT * rowHeight}px`,
           height: `${ROW_COUNT * rowHeight}px`,
@@ -62,7 +62,6 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
                 key={issue.id}
                 className="h-8 cursor-pointer hover:bg-blue-100 transition-colors"
                 onClick={() => {
-                  // Handle row click to show issue details
                   if (onRowClick) {
                     onRowClick(issue);
                   }
@@ -106,7 +105,7 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
             ))}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
 

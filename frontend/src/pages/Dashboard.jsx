@@ -146,6 +146,7 @@ function Dashboard() {
     setShowModal(true);
   };
 
+  // handle update issues
   const handleUpdateIssue = async () => {
     try {
       const response = await fetch(
@@ -182,51 +183,63 @@ function Dashboard() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8">
-        <h1 className="text-4xl font-bold mb-8 mt-8 text-center text-white">
-          Dashboard
-        </h1>
-
-        <div className="w-full flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
-          <input
-            type="text"
-            placeholder="Search issues..."
-            className="mb-4 p-2 rounded border border-gray-300 mr-4 w-full md:w-auto"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          {/* status filter */}
-          <SelectComponent
-            filter={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            name="status"
-            options={[
-              { label: "Select Status", value: "" },
-              { label: "Open", value: "open" },
-              { label: "In progress", value: "in progress" },
-              { label: "Resolved", value: "resolved" },
-            ]}
-            isEdit={true}
-          />
-          {/* priority filter */}
-          <SelectComponent
-            filter={priorityFilter}
-            onChange={(e) => setPriorityFilter(e.target.value)}
-            name="priority"
-            options={[
-              { label: "Select Priority", value: "" },
-              { label: "High", value: "high" },
-              { label: "Medium", value: "medium" },
-              { label: "Low", value: "low" },
-            ]}
-            isEdit={true}
-          />
-          {/* search button */}
-          <Button onClickFunction={fetchIssues} name={"Search"} />
-          {/* reset button */}
-          <Button onClickFunction={handleReset} name={"Reset"} />
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8 pt-20">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
+          <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between p-0 bg-gray-100 rounded-lg shadow-md">
+            <input
+              type="text"
+              placeholder="Search issues..."
+              className="mb-4 p-2 rounded border border-gray-300 mr-4 w-full md:w-auto"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {/* status filter */}
+            <SelectComponent
+              filter={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              name="status"
+              options={[
+                { label: "Select Status", value: "" },
+                { label: "Open", value: "open" },
+                { label: "In progress", value: "in progress" },
+                { label: "Resolved", value: "resolved" },
+              ]}
+              isEdit={true}
+            />
+            {/* priority filter */}
+            <SelectComponent
+              filter={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              name="priority"
+              options={[
+                { label: "Select Priority", value: "" },
+                { label: "High", value: "high" },
+                { label: "Medium", value: "medium" },
+                { label: "Low", value: "low" },
+              ]}
+              isEdit={true}
+            />
+            {/* search button */}
+            <Button onClickFunction={fetchIssues} name={"Search"} />
+            {/* reset button */}
+            <Button onClickFunction={handleReset} name={"Reset"} />
+            {/* <div className="w-full flex justify-end mb-4"> */}
+            <Button
+              onClickFunction={() => {
+                setShowModal(true);
+                setSelectedIssue(null);
+                setFormData({
+                  title: "",
+                  description: "",
+                  status: "open",
+                  priority: "medium",
+                });
+                setIsEdit(true);
+              }}
+              name={"Add New Issue"}
+            />
+            {/* </div> */}
+          </div>{" "}
           <Table
             allIssues={allIssues}
             handleDeleteIssue={handleDeleteIssue}
@@ -254,20 +267,7 @@ function Dashboard() {
             </div>
           )}
         </div>
-        <Button
-          onClickFunction={() => {
-            setShowModal(true);
-            setSelectedIssue(null);
-            setFormData({
-              title: "",
-              description: "",
-              status: "open",
-              priority: "medium",
-            });
-            setIsEdit(true);
-          }}
-          name={"Add New Issue"}
-        />
+
         {showModal && (
           <Modal
             show={showModal}
