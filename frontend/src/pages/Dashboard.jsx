@@ -253,7 +253,10 @@ function Dashboard() {
               }}
               name={"Add New Issue"}
             />
-            <Button onClick={() => exportToJSON(issues)}>Export JSON</Button>
+            <Button
+              onClickFunction={() => exportToJSON(allIssues)}
+              name={"Export JSON"}
+            />
 
             {/* </div> */}
           </div>{" "}
