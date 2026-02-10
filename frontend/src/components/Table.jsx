@@ -3,13 +3,13 @@ import React from "react";
 function Table({ allIssues, handleDeleteIssue, onRowClick }) {
   // Fixed row count
   const ROW_COUNT = 10;
-  const rowHeight = 32;
+  const rowHeight = 32; // 8 (padding) + 16 (line height) + 8 (padding)
   const emptyRows = ROW_COUNT - allIssues.length;
 
   return (
     <div className="w-full overflow-x-auto">
       <table
-        className="table-auto min-w-full bg-white rounded-lg shadow-md text-left"
+        className="table-auto min-w-full bg-white rounded-lg shadow-md text-center"
         style={{
           minHeight: `${ROW_COUNT * rowHeight}px`,
           height: `${ROW_COUNT * rowHeight}px`,
@@ -62,6 +62,7 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
                 key={issue.id}
                 className="h-8 cursor-pointer hover:bg-blue-100 transition-colors"
                 onClick={() => {
+                  // Handle row click to show issue details
                   if (onRowClick) {
                     onRowClick(issue);
                   }
