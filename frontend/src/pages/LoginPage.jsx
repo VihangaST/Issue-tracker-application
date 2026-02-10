@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import useAuthStore from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 import { BASE_URL } from "../config";
 function LoginPage() {
   const navigate = useNavigate();
+  const setToken = useAuthStore((state) => state.setToken);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -36,6 +38,10 @@ function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
+        if (data.token) {
+          console.log("Received token:", data.token);
+          setToken(data.token);
+        }
         alert(data.message);
         console.log("Login successful:", data.message);
         navigate("/dashboard");
