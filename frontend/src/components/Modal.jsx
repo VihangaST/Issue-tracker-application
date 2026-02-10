@@ -29,7 +29,7 @@ const Modal = ({
           &times;
         </button>
         <form
-          className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
+          className="bg-white p-2 rounded-lg shadow-md w-full max-w-md"
           onSubmit={onSubmit}
         >
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
@@ -65,37 +65,39 @@ const Modal = ({
               readOnly={!isEdit}
             />
           </div>
-          <div className="mb-6">
-            <label htmlFor="status" className="block text-gray-700 mb-2">
-              Status
-            </label>
-            <SelectComponent
-              filter={formData.status}
-              onChange={handleChange}
-              name="status"
-              options={[
-                { label: "Open", value: "open" },
-                { label: "In Progress", value: "in progress" },
-                { label: "Resolved", value: "resolved" },
-              ]}
-              isEdit={isEdit}
-            />
-          </div>
-          <div className="mb-6">
-            <label htmlFor="priority" className="block text-gray-700 mb-2">
-              Priority
-            </label>
-            <SelectComponent
-              filter={formData.priority}
-              onChange={handleChange}
-              name="priority"
-              options={[
-                { label: "Low", value: "low" },
-                { label: "Medium", value: "medium" },
-                { label: "High", value: "high" },
-              ]}
-              isEdit={isEdit}
-            />
+          <div className="mb-6 flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <label htmlFor="status" className="block text-gray-700 mb-2">
+                Status
+              </label>
+              <SelectComponent
+                filter={formData.status}
+                onChange={handleChange}
+                name="status"
+                options={[
+                  { label: "Open", value: "open" },
+                  { label: "In Progress", value: "in progress" },
+                  { label: "Resolved", value: "resolved" },
+                ]}
+                isEdit={isEdit}
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="priority" className="block text-gray-700 mb-2">
+                Priority
+              </label>
+              <SelectComponent
+                filter={formData.priority}
+                onChange={handleChange}
+                name="priority"
+                options={[
+                  { label: "Low", value: "low" },
+                  { label: "Medium", value: "medium" },
+                  { label: "High", value: "high" },
+                ]}
+                isEdit={isEdit}
+              />
+            </div>
           </div>
           {/* Show Edit button in view mode */}
           {!isEdit && (
@@ -111,7 +113,7 @@ const Modal = ({
           {isEdit && (
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
+              className="mb-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
             >
               Update
             </button>
