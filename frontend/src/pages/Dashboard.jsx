@@ -183,11 +183,7 @@ function Dashboard() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8">
-        <h1 className="text-xl font-bold mb-8 mt-8 text-center text-white">
-          Dashboard
-        </h1>
-
+      <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8 pt-20">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <div className="w-full flex flex-col md:flex-row md:items-center md:justify-center p-0 bg-gray-100 rounded-lg shadow-md">
             <input
@@ -227,6 +223,22 @@ function Dashboard() {
             <Button onClickFunction={fetchIssues} name={"Search"} />
             {/* reset button */}
             <Button onClickFunction={handleReset} name={"Reset"} />
+            {/* <div className="w-full flex justify-end mb-4"> */}
+            <Button
+              onClickFunction={() => {
+                setShowModal(true);
+                setSelectedIssue(null);
+                setFormData({
+                  title: "",
+                  description: "",
+                  status: "open",
+                  priority: "medium",
+                });
+                setIsEdit(true);
+              }}
+              name={"Add New Issue"}
+            />
+            {/* </div> */}
           </div>{" "}
           <Table
             allIssues={allIssues}
@@ -255,20 +267,7 @@ function Dashboard() {
             </div>
           )}
         </div>
-        <Button
-          onClickFunction={() => {
-            setShowModal(true);
-            setSelectedIssue(null);
-            setFormData({
-              title: "",
-              description: "",
-              status: "open",
-              priority: "medium",
-            });
-            setIsEdit(true);
-          }}
-          name={"Add New Issue"}
-        />
+
         {showModal && (
           <Modal
             show={showModal}
