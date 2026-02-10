@@ -8,6 +8,21 @@ import Button from "../components/Button";
 import { BASE_URL } from "../config";
 import useAuthStore from "../store/useAuthStore";
 
+// export to JSON function
+const exportToJSON = (issues) => {
+  const dataStr = JSON.stringify(issues, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "issues.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
+
 function Dashboard() {
   // For editing/viewing an issue in modal
   const [selectedIssue, setSelectedIssue] = useState(null);
@@ -238,6 +253,8 @@ function Dashboard() {
               }}
               name={"Add New Issue"}
             />
+            <Button onClick={() => exportToJSON(issues)}>Export JSON</Button>
+
             {/* </div> */}
           </div>{" "}
           <Table
