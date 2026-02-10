@@ -185,7 +185,7 @@ function Dashboard() {
     <>
       <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8 pt-20">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
-          <div className="w-full flex flex-col md:flex-row md:items-center md:justify-center p-0 bg-gray-100 rounded-lg shadow-md">
+          <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between p-0 bg-gray-100 rounded-lg shadow-md">
             <input
               type="text"
               placeholder="Search issues..."
