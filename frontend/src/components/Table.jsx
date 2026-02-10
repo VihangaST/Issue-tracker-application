@@ -7,20 +7,20 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
   const emptyRows = ROW_COUNT - allIssues.length;
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full overflow-x-auto rounded-lg shadow-md">
       <table
-        className="table-auto min-w-full bg-white rounded-lg shadow-md text-center"
+        className="table-auto min-w-full bg-white rounded-lg text-center"
         style={{
           minHeight: `${ROW_COUNT * rowHeight}px`,
           height: `${ROW_COUNT * rowHeight}px`,
         }}
       >
         <thead>
-          <tr className="h-8 bg-gray-200">
+          <tr className="h-8 bg-gray-600">
             {["ID", "Title", "Status", "Priority", "Delete"].map((header) => (
               <th
                 key={header}
-                className="px-4 py-2 text-gray-700 font-semibold"
+                className="px-4 py-2 text-gray-300 font-semibold"
               >
                 {header}
               </th>
@@ -60,7 +60,7 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
             return (
               <tr
                 key={issue.id}
-                className="h-8 cursor-pointer hover:bg-blue-100 transition-colors"
+                className="h-8 cursor-pointer hover:bg-gray-200 transition-colors"
                 onClick={() => {
                   // Handle row click to show issue details
                   if (onRowClick) {
