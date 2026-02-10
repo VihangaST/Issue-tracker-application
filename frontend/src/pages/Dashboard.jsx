@@ -6,6 +6,7 @@ import useFormStore from "../store/useFormStore";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 import { BASE_URL } from "../config";
+import useAuthStore from "../store/useAuthStore";
 
 function Dashboard() {
   // For editing/viewing an issue in modal
@@ -16,6 +17,7 @@ function Dashboard() {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [allIssues, setAllIssues] = useState([]);
   const [totalIssues, setTotalIssues] = useState(0);
+  const token = useAuthStore((state) => state.token);
 
   // modal
   const [showModal, setShowModal] = useState(false);
@@ -48,7 +50,10 @@ function Dashboard() {
         `${BASE_URL}/api/issues/fetch?${params.toString()}`,
         {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         },
       );
       alert("called");
@@ -76,7 +81,10 @@ function Dashboard() {
     try {
       const response = await fetch(`${BASE_URL}/api/issues/add`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           formData,
         }),
@@ -109,7 +117,10 @@ function Dashboard() {
     try {
       const response = await fetch(`${BASE_URL}/api/issues/delete/${id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       if (response.ok) {
         alert("Issue deleted successfully!");
@@ -141,7 +152,10 @@ function Dashboard() {
         `${BASE_URL}/api/issues/update/${selectedIssue.id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           body: JSON.stringify({
             formData,
           }),

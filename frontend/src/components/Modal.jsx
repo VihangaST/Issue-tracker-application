@@ -2,9 +2,16 @@ import React from "react";
 import SelectComponent from "./SelectComponent";
 import useFormStore from "../store/useFormStore";
 
-const Modal = ({ show, onClose, onSubmit, formData, setFormData, title }) => {
-  const isEdit = useFormStore((state) => state.isEdit);
-  const setIsEdit = useFormStore((state) => state.setIsEdit);
+const Modal = ({
+  show,
+  onClose,
+  onSubmit,
+  formData,
+  setFormData,
+  title,
+  isEdit,
+  setIsEdit,
+}) => {
   if (!show) return null;
 
   const handleChange = (e) => {
