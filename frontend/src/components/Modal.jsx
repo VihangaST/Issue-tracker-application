@@ -51,7 +51,7 @@ const Modal = ({
               readOnly={!isEdit}
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label htmlFor="description" className="block text-gray-700 mb-2">
               Description
             </label>
@@ -65,7 +65,7 @@ const Modal = ({
               readOnly={!isEdit}
             />
           </div>
-          <div className="mb-6 flex flex-col md:flex-row gap-4">
+          <div className="mb-4 flex flex-col md:flex-row gap-8">
             <div className="flex-1">
               <label htmlFor="status" className="block text-gray-700 mb-2">
                 Status
