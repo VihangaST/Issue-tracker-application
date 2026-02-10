@@ -199,7 +199,7 @@ function Dashboard() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-start bg-white p-8 pt-16 pb-4">
+      <div className="min-h-screen flex flex-col items-center justify-start bg-white px-2 sm:px-8 pt-16 pb-4">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between bg-gray-100 rounded-lg ">
             <input
@@ -268,7 +268,14 @@ function Dashboard() {
           />
           {/* Pagination Controls */}
           {totalIssues > 0 && (
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center items-center mt-4">
+              <button
+                className="mx-1 px-3 py-1 rounded bg-gray-300 text-gray-700 border border-gray-400 hover:bg-gray-400 disabled:opacity-50"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </button>
               {Array.from(
                 { length: Math.ceil(totalIssues / pageSize) },
                 (_, i) => (
@@ -282,6 +289,13 @@ function Dashboard() {
                   </button>
                 ),
               )}
+              <button
+                className="mx-1 px-3 py-1 rounded bg-gray-300 text-gray-700 border border-gray-400 hover:bg-gray-400 disabled:opacity-50"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === Math.ceil(totalIssues / pageSize)}
+              >
+                Next
+              </button>
             </div>
           )}
         </div>
