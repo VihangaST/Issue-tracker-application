@@ -7,6 +7,7 @@ import Modal from "../components/Modal";
 import Button from "../components/Button";
 import { BASE_URL } from "../config";
 import useAuthStore from "../store/useAuthStore";
+import Analytics from "../components/Analytics";
 
 // export to JSON function
 const exportToJSON = (issues) => {
@@ -198,13 +199,13 @@ function Dashboard() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8 pt-20">
+      <div className="min-h-screen flex flex-col items-center justify-start bg-gray-500 p-8 pt-16 pb-4">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
-          <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between p-0 bg-gray-100 rounded-lg shadow-md">
+          <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between bg-gray-100 rounded-lg ">
             <input
               type="text"
               placeholder="Search issues..."
-              className="mb-4 p-2 rounded border border-gray-300 mr-4 w-full md:w-auto"
+              className="mb-2 p-2 rounded border border-gray-300 mr-4 w-full md:w-auto"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -287,6 +288,7 @@ function Dashboard() {
             </div>
           )}
         </div>
+        <Analytics />
 
         {showModal && (
           <Modal
