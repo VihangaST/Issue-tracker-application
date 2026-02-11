@@ -1,49 +1,5 @@
-import { useEffect, useState } from "react";
 import Card from "./Card";
-import useFormStore from "../store/useFormStore";
-import { BASE_URL } from "../config";
-
-function Analytics() {
-  const shouldFetchStatusCount = useFormStore(
-    (state) => state.shouldFetchStatusCount,
-  );
-  const [statusCounts, setStatusCounts] = useState({
-    Open: 0,
-    "In Progress": 0,
-    Resolved: 0,
-  });
-  useEffect(() => {
-    fetchStatusCounts();
-  }, [shouldFetchStatusCount]);
-
-  const fetchStatusCounts = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/issues/status-counts`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const statusCount = data.statusCounts;
-        console.log("Status counts:", statusCount);
-        setStatusCounts({
-          Open: statusCount.find((item) => item.status === "open")?.count || 0,
-          "In Progress":
-            statusCount.find((item) => item.status === "in progress")?.count ||
-            0,
-          Resolved:
-            statusCount.find((item) => item.status === "resolved")?.count || 0,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching status counts:", error);
-    }
-  };
-
+function Analytics({ statusCounts }) {
   return (
     <>
       <div className="flex flex-col sm:flex-row w-full gap-4 mt-2 items-stretch justify-center">

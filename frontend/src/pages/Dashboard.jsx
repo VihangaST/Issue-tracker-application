@@ -41,6 +41,8 @@ function Dashboard() {
     Resolved: 0,
   });
 
+  const [shouldFetch, setShouldFetch] = useState(false);
+
   // modal
   const [showModal, setShowModal] = useState(false);
 
@@ -52,10 +54,6 @@ function Dashboard() {
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-
-  useEffect(() => {
-    fetchIssues({ preventDefault: () => {} });
-  }, [currentPage]);
 
   const fetchStatusCounts = async () => {
     alert("Fetching status counts...");
@@ -90,10 +88,6 @@ function Dashboard() {
   const fetchIssues = async (e) => {
     if (e && typeof e.preventDefault === "function") e.preventDefault();
     try {
-      if (searchTerm || statusFilter || priorityFilter) {
-        setCurrentPage(1);
-      }
-
       const params = new URLSearchParams({
         searchTerm,
         statusFilter,
@@ -146,8 +140,7 @@ function Dashboard() {
       });
       if (response.ok) {
         alert("Issue added successfully!");
-        fetchIssues(new Event("submit"));
-        fetchStatusCounts();
+        setShouldFetch(true);
       }
       resetFormData();
     } catch (error) {
@@ -163,6 +156,7 @@ function Dashboard() {
     setAllIssues([]);
     setTotalIssues(0);
     setCurrentPage(1);
+    setShouldFetch(true);
   };
 
   // handleDeleteIssue function
@@ -180,8 +174,7 @@ function Dashboard() {
       });
       if (response.ok) {
         alert("Issue deleted successfully!");
-        fetchIssues(new Event("submit"));
-        fetchStatusCounts();
+        setShouldFetch(true);
       } else {
         alert("Failed to delete issue");
       }
@@ -223,8 +216,7 @@ function Dashboard() {
 
       if (response.ok) {
         alert("Issue updated successfully!");
-        fetchIssues(new Event("submit"));
-        fetchStatusCounts();
+        setShouldFetch(true);
       } else {
         const data = await response.json();
         console.error("Failed to update issue:", data.message);
@@ -241,8 +233,19 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    fetchIssues({ preventDefault: () => {} });
+  }, [currentPage]);
+
+  useEffect(() => {
     fetchStatusCounts();
   }, []);
+  useEffect(() => {
+    if (shouldFetch) {
+      fetchIssues();
+      fetchStatusCounts();
+      setShouldFetch(false);
+    }
+  }, [shouldFetch]);
 
   return (
     <>

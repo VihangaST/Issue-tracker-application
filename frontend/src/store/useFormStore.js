@@ -19,9 +19,6 @@ const useFormStore = create((set) => ({
       },
     }),
 
-  shouldFetchStatusCount: false,
-  setShouldFetchStatusCount: (value) => set({ shouldFetchStatusCount: value }),
-
   // isEdit: false,
   // setIsEdit: (value) => set({ isEdit: value }),
   // fetchIssues: async ({
