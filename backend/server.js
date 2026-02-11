@@ -3,6 +3,9 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import issueRoutes from "./routes/issueRoutes.js";
 import sequelize from "./config/db.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
@@ -17,7 +20,7 @@ sequelize
 app.use("/api/auth", authRoutes);
 app.use("/api/issues", issueRoutes);
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
