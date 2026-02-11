@@ -62,7 +62,6 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
                 key={issue.id}
                 className="h-8 cursor-pointer hover:bg-gray-200 transition-colors"
                 onClick={() => {
-                  // Handle row click to show issue details
                   if (onRowClick) {
                     onRowClick(issue);
                   }
@@ -74,14 +73,14 @@ function Table({ allIssues, handleDeleteIssue, onRowClick }) {
                   <span
                     className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring inset-ring-gray-400/20 ${statusColor}`}
                   >
-                    {issue.status}
+                    {issue.status.toUpperCase()}
                   </span>
                 </td>
                 <td>
                   <span
                     className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring inset-ring-gray-400/20 ${priorityColor}`}
                   >
-                    {issue.priority}
+                    {issue.priority.toUpperCase()}
                   </span>
                 </td>
                 <td>
