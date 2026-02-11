@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import { BASE_URL } from "../config";
 import useAuthStore from "../store/useAuthStore";
 import Analytics from "../components/Analytics";
+import Toast from "../components/Toast";
 
 // export to JSON function
 const exportToJSON = (issues) => {
@@ -41,6 +42,12 @@ function Dashboard() {
     Resolved: 0,
   });
 
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "success",
+  });
+
   const [shouldFetch, setShouldFetch] = useState(false);
 
   // modal
@@ -56,7 +63,6 @@ function Dashboard() {
   const pageSize = 10;
 
   const fetchStatusCounts = async () => {
-    alert("Fetching status counts...");
     try {
       const response = await fetch(`${BASE_URL}/api/issues/status-counts`, {
         method: "GET",
@@ -65,11 +71,16 @@ function Dashboard() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      const data = await response.json();
 
       if (response.ok) {
-        const data = await response.json();
         const statusCount = data.statusCounts;
         console.log("Status counts:", statusCount);
+        // setToast({
+        //   open: true,
+        //   message: "Status counts fetched successfully!",
+        //   type: "success",
+        // });
         setStatusCounts({
           Open: statusCount.find((item) => item.status === "open")?.count || 0,
           "In Progress":
@@ -78,8 +89,21 @@ function Dashboard() {
           Resolved:
             statusCount.find((item) => item.status === "resolved")?.count || 0,
         });
+      } else {
+        setToast({
+          open: true,
+          message: "Failed to fetch status counts",
+          type: "error",
+        });
+        console.error("Failed to fetch status counts:", data.message);
       }
     } catch (error) {
+      setToast({
+        open: true,
+        message: "Error fetching status counts",
+        type: "error",
+      });
+
       console.error("Error fetching status counts:", error);
     }
   };
@@ -105,7 +129,6 @@ function Dashboard() {
           },
         },
       );
-      alert("called");
 
       const data = await response.json();
       console.log("Fetched issues:", data);
@@ -115,13 +138,26 @@ function Dashboard() {
         setShowModal(false);
 
         console.log("Issues set in state:", data.issues);
-        alert("Issues fetched successfully!");
+        setToast({
+          open: true,
+          message: "Issues fetched successfully!",
+          type: "success",
+        });
       } else {
         console.error("Failed to fetch issues:", data.message);
-        alert("Failed to fetch issues: " + data.message);
+        setToast({
+          open: true,
+          message: "Failed to fetch issues: " + data.message,
+          type: "error",
+        });
       }
     } catch (error) {
       console.error("Error fetching issues:", error);
+      setToast({
+        open: true,
+        message: "Error fetching issues: " + error.message,
+        type: "error",
+      });
     }
   };
 
@@ -139,12 +175,21 @@ function Dashboard() {
         }),
       });
       if (response.ok) {
-        alert("Issue added successfully!");
+        setToast({
+          open: true,
+          message: "Issue added successfully!",
+          type: "success",
+        });
         setShouldFetch(true);
       }
       resetFormData();
     } catch (error) {
       console.error("Error adding new issue:", error);
+      setToast({
+        open: true,
+        message: "Error adding new issue: " + error.message,
+        type: "error",
+      });
     }
   };
 
@@ -173,14 +218,27 @@ function Dashboard() {
         },
       });
       if (response.ok) {
-        alert("Issue deleted successfully!");
+        setToast({
+          open: true,
+          message: "Issue deleted successfully!",
+          type: "success",
+        });
         setShouldFetch(true);
       } else {
-        alert("Failed to delete issue");
+        setToast({
+          open: true,
+          message: "Failed to delete issue",
+          type: "error",
+        });
+        console.error("Failed to delete issue:", await response.text());
       }
     } catch (error) {
       console.error("Error deleting issue:", error);
-      alert("Error deleting issue: " + error.message);
+      setToast({
+        open: true,
+        message: "Error deleting issue: " + error.message,
+        type: "error",
+      });
     }
   };
 
@@ -215,19 +273,29 @@ function Dashboard() {
       );
 
       if (response.ok) {
-        alert("Issue updated successfully!");
+        setToast({
+          open: true,
+          message: "Issue updated successfully!",
+          type: "success",
+        });
         setShouldFetch(true);
       } else {
         const data = await response.json();
         console.error("Failed to update issue:", data.message);
-        alert("Failed to update issue");
+        setToast({
+          open: true,
+          message: "Failed to update issue: " + data.message,
+          type: "error",
+        });
       }
     } catch (error) {
       console.error("Error updating issue:", error);
-      alert("Error updating issue: " + error.message);
+      setToast({
+        open: true,
+        message: "Error updating issue: " + error.message,
+        type: "error",
+      });
     }
-
-    alert("Update issue functionality");
     setIsEdit(false);
     setShowModal(false);
   };
@@ -249,6 +317,13 @@ function Dashboard() {
 
   return (
     <>
+      {toast.open && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, open: false })}
+        />
+      )}
       <div className="min-h-screen flex flex-col items-center justify-start bg-white px-2 sm:px-8 pt-16 pb-4">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between bg-gray-100 rounded-lg ">
