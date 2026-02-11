@@ -21,7 +21,7 @@ export const loginUser = async (req, res) => {
 
     const JWT_SECRET = process.env.JWT_SECRET;
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "2m",
     });
 
     res.json({
@@ -37,15 +37,10 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// registerUser function to handle user registration
+// registerUser function
 export const registerUser = async (req, res) => {
   try {
     const { email, password, confirmPassword } = req.body;
-    console.log("Received registration request:", {
-      email,
-      password,
-      confirmPassword,
-    });
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {

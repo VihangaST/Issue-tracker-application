@@ -9,6 +9,7 @@ import { BASE_URL } from "../config";
 import useAuthStore from "../store/useAuthStore";
 import Analytics from "../components/Analytics";
 import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 // export to JSON function
 const exportToJSON = (issues) => {
@@ -36,6 +37,8 @@ function Dashboard() {
   const [totalIssues, setTotalIssues] = useState(0);
   const token = useAuthStore((state) => state.token);
 
+  const navigate = useNavigate();
+
   const [statusCounts, setStatusCounts] = useState({
     Open: 0,
     "In Progress": 0,
@@ -57,10 +60,29 @@ function Dashboard() {
   const formData = useFormStore((state) => state.formData);
   const setFormData = useFormStore((state) => state.setFormData);
   const resetFormData = useFormStore((state) => state.resetFormData);
+  const logout = useAuthStore((state) => state.logout);
 
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+
+  const handleAuthError = async (response) => {
+    if (response.status === 401 || response.status === 403) {
+      setToast({
+        open: true,
+        message: "Session expired. Please log in again.",
+        type: "error",
+      });
+      await logout();
+      await navigate("/");
+    } else {
+      setToast({
+        open: true,
+        message: "An error occurred. Please try again.",
+        type: "error",
+      });
+    }
+  };
 
   const fetchStatusCounts = async () => {
     try {
@@ -76,11 +98,11 @@ function Dashboard() {
       if (response.ok) {
         const statusCount = data.statusCounts;
         console.log("Status counts:", statusCount);
-        // setToast({
-        //   open: true,
-        //   message: "Status counts fetched successfully!",
-        //   type: "success",
-        // });
+        setToast({
+          open: true,
+          message: "Status counts fetched successfully!",
+          type: "success",
+        });
         setStatusCounts({
           Open: statusCount.find((item) => item.status === "open")?.count || 0,
           "In Progress":
@@ -90,11 +112,12 @@ function Dashboard() {
             statusCount.find((item) => item.status === "resolved")?.count || 0,
         });
       } else {
-        setToast({
-          open: true,
-          message: "Failed to fetch status counts",
-          type: "error",
-        });
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to fetch status counts",
+        //   type: "error",
+        // });
         console.error("Failed to fetch status counts:", data.message);
       }
     } catch (error) {
@@ -145,11 +168,12 @@ function Dashboard() {
         });
       } else {
         console.error("Failed to fetch issues:", data.message);
-        setToast({
-          open: true,
-          message: "Failed to fetch issues: " + data.message,
-          type: "error",
-        });
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to fetch issues: " + data.message,
+        //   type: "error",
+        // });
       }
     } catch (error) {
       console.error("Error fetching issues:", error);
@@ -174,6 +198,7 @@ function Dashboard() {
           formData,
         }),
       });
+      const data = await response.json();
       if (response.ok) {
         setToast({
           open: true,
@@ -181,7 +206,16 @@ function Dashboard() {
           type: "success",
         });
         setShouldFetch(true);
+      } else {
+        console.error("Failed to add issue:", data.message);
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to add issue: " + data.message,
+        //   type: "error",
+        // });
       }
+
       resetFormData();
     } catch (error) {
       console.error("Error adding new issue:", error);
@@ -225,11 +259,12 @@ function Dashboard() {
         });
         setShouldFetch(true);
       } else {
-        setToast({
-          open: true,
-          message: "Failed to delete issue",
-          type: "error",
-        });
+        // setToast({
+        //   open: true,
+        //   message: "Failed to delete issue",
+        //   type: "error",
+        // });
+        handleAuthError(response, logout, setToast);
         console.error("Failed to delete issue:", await response.text());
       }
     } catch (error) {
@@ -271,6 +306,7 @@ function Dashboard() {
           }),
         },
       );
+      const data = await response.json();
 
       if (response.ok) {
         setToast({
@@ -280,13 +316,13 @@ function Dashboard() {
         });
         setShouldFetch(true);
       } else {
-        const data = await response.json();
         console.error("Failed to update issue:", data.message);
-        setToast({
-          open: true,
-          message: "Failed to update issue: " + data.message,
-          type: "error",
-        });
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to update issue: " + data.message,
+        //   type: "error",
+        // });
       }
     } catch (error) {
       console.error("Error updating issue:", error);
@@ -369,28 +405,42 @@ function Dashboard() {
               ]}
               isEdit={true}
             />
-            {/* search button */}
-            <Button onClickFunction={fetchIssues} name={"Search"} />
-            {/* reset button */}
-            <Button onClickFunction={handleReset} name={"Reset"} />
-            <Button
-              onClickFunction={() => {
-                setShowModal(true);
-                setSelectedIssue(null);
-                setFormData({
-                  title: "",
-                  description: "",
-                  status: "open",
-                  priority: "medium",
-                });
-                setIsEdit(true);
-              }}
-              name={"Add New Issue"}
-            />
-            <Button
-              onClickFunction={() => exportToJSON(allIssues)}
-              name={"Export JSON"}
-            />
+            <div className="flex flex-row gap-2 md:w-auto md:mb-0">
+              {/* reset button */}
+              <Button
+                onClickFunction={handleReset}
+                name={"Reset"}
+                color="cyan1"
+              />{" "}
+              {/* search button */}
+              <Button
+                onClickFunction={fetchIssues}
+                name={"Search"}
+                color="cyan1"
+              />
+            </div>
+            <div className="flex flex-row gap-2 md:w-auto mb-2 md:mb-0">
+              <Button
+                onClickFunction={() => exportToJSON(allIssues)}
+                name={"Export JSON"}
+                color="cyan2"
+              />
+              <Button
+                onClickFunction={() => {
+                  setShowModal(true);
+                  setSelectedIssue(null);
+                  setFormData({
+                    title: "",
+                    description: "",
+                    status: "open",
+                    priority: "medium",
+                  });
+                  setIsEdit(true);
+                }}
+                name={"Add New Issue"}
+                color="cyan2"
+              />
+            </div>
           </div>{" "}
           <Table
             allIssues={allIssues}

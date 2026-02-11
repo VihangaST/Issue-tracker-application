@@ -35,7 +35,6 @@ export const fetchIssues = async (req, res) => {
         where,
         limit,
         offset,
-        // order: [["createdAt", "DESC"]],
       });
 
     res.status(200).json({
@@ -126,7 +125,6 @@ export const updateIssue = async (req, res) => {
 // fetch status counts
 export const statusCounts = async (req, res) => {
   try {
-    // Extract userId from JWT middleware (use id from JWT payload)
     const userId = req.user?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
