@@ -257,12 +257,18 @@ function Dashboard() {
               placeholder="Search issues..."
               className="mb-2 p-2 rounded border text-gray-700 border-gray-300 mr-4 w-full md:w-auto"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
             />
             {/* status filter */}
             <SelectComponent
               filter={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
               name="status"
               options={[
                 { label: "Select Status", value: "" },
@@ -275,7 +281,10 @@ function Dashboard() {
             {/* priority filter */}
             <SelectComponent
               filter={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
+              onChange={(e) => {
+                setPriorityFilter(e.target.value);
+                setCurrentPage(1);
+              }}
               name="priority"
               options={[
                 { label: "Select Priority", value: "" },
