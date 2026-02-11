@@ -35,6 +35,12 @@ function Dashboard() {
   const [totalIssues, setTotalIssues] = useState(0);
   const token = useAuthStore((state) => state.token);
 
+  const [statusCounts, setStatusCounts] = useState({
+    Open: 0,
+    "In Progress": 0,
+    Resolved: 0,
+  });
+
   // modal
   const [showModal, setShowModal] = useState(false);
 
@@ -51,10 +57,43 @@ function Dashboard() {
     fetchIssues({ preventDefault: () => {} });
   }, [currentPage]);
 
+  const fetchStatusCounts = async () => {
+    alert("Fetching status counts...");
+    try {
+      const response = await fetch(`${BASE_URL}/api/issues/status-counts`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const statusCount = data.statusCounts;
+        console.log("Status counts:", statusCount);
+        setStatusCounts({
+          Open: statusCount.find((item) => item.status === "open")?.count || 0,
+          "In Progress":
+            statusCount.find((item) => item.status === "in progress")?.count ||
+            0,
+          Resolved:
+            statusCount.find((item) => item.status === "resolved")?.count || 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching status counts:", error);
+    }
+  };
+
   // fetch issues based on search and filter
   const fetchIssues = async (e) => {
     if (e && typeof e.preventDefault === "function") e.preventDefault();
     try {
+      if (searchTerm || statusFilter || priorityFilter) {
+        setCurrentPage(1);
+      }
+
       const params = new URLSearchParams({
         searchTerm,
         statusFilter,
@@ -108,6 +147,7 @@ function Dashboard() {
       if (response.ok) {
         alert("Issue added successfully!");
         fetchIssues(new Event("submit"));
+        fetchStatusCounts();
       }
       resetFormData();
     } catch (error) {
@@ -140,6 +180,8 @@ function Dashboard() {
       });
       if (response.ok) {
         alert("Issue deleted successfully!");
+        fetchIssues(new Event("submit"));
+        fetchStatusCounts();
       } else {
         alert("Failed to delete issue");
       }
@@ -181,7 +223,8 @@ function Dashboard() {
 
       if (response.ok) {
         alert("Issue updated successfully!");
-        // fetchIssues(new Event("submit"));
+        fetchIssues(new Event("submit"));
+        fetchStatusCounts();
       } else {
         const data = await response.json();
         console.error("Failed to update issue:", data.message);
@@ -196,6 +239,10 @@ function Dashboard() {
     setIsEdit(false);
     setShowModal(false);
   };
+
+  useEffect(() => {
+    fetchStatusCounts();
+  }, []);
 
   return (
     <>
@@ -299,7 +346,7 @@ function Dashboard() {
             </div>
           )}
         </div>
-        <Analytics />
+        <Analytics statusCounts={statusCounts} />
 
         {showModal && (
           <Modal
