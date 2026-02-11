@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import Card from "./Card";
+import useFormStore from "../store/useFormStore";
 import { BASE_URL } from "../config";
 
 function Analytics() {
+  const shouldFetchStatusCount = useFormStore(
+    (state) => state.shouldFetchStatusCount,
+  );
   const [statusCounts, setStatusCounts] = useState({
     Open: 0,
     "In Progress": 0,
@@ -10,9 +14,8 @@ function Analytics() {
   });
   useEffect(() => {
     fetchStatusCounts();
-  }, []);
+  }, [shouldFetchStatusCount]);
 
-  // fetch status counts
   const fetchStatusCounts = async () => {
     try {
       const response = await fetch(`${BASE_URL}/api/issues/status-counts`, {
