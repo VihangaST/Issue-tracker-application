@@ -8,6 +8,8 @@ import Button from "../components/Button";
 import { BASE_URL } from "../config";
 import useAuthStore from "../store/useAuthStore";
 import Analytics from "../components/Analytics";
+import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 // export to JSON function
 const exportToJSON = (issues) => {
@@ -35,10 +37,18 @@ function Dashboard() {
   const [totalIssues, setTotalIssues] = useState(0);
   const token = useAuthStore((state) => state.token);
 
+  const navigate = useNavigate();
+
   const [statusCounts, setStatusCounts] = useState({
     Open: 0,
     "In Progress": 0,
     Resolved: 0,
+  });
+
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "success",
   });
 
   const [shouldFetch, setShouldFetch] = useState(false);
@@ -50,13 +60,31 @@ function Dashboard() {
   const formData = useFormStore((state) => state.formData);
   const setFormData = useFormStore((state) => state.setFormData);
   const resetFormData = useFormStore((state) => state.resetFormData);
+  const logout = useAuthStore((state) => state.logout);
 
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
+  const handleAuthError = async (response) => {
+    if (response.status === 401 || response.status === 403) {
+      setToast({
+        open: true,
+        message: "Session expired. Please log in again.",
+        type: "error",
+      });
+      await logout();
+      await navigate("/");
+    } else {
+      setToast({
+        open: true,
+        message: "An error occurred. Please try again.",
+        type: "error",
+      });
+    }
+  };
+
   const fetchStatusCounts = async () => {
-    alert("Fetching status counts...");
     try {
       const response = await fetch(`${BASE_URL}/api/issues/status-counts`, {
         method: "GET",
@@ -65,11 +93,16 @@ function Dashboard() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      const data = await response.json();
 
       if (response.ok) {
-        const data = await response.json();
         const statusCount = data.statusCounts;
         console.log("Status counts:", statusCount);
+        setToast({
+          open: true,
+          message: "Status counts fetched successfully!",
+          type: "success",
+        });
         setStatusCounts({
           Open: statusCount.find((item) => item.status === "open")?.count || 0,
           "In Progress":
@@ -78,8 +111,22 @@ function Dashboard() {
           Resolved:
             statusCount.find((item) => item.status === "resolved")?.count || 0,
         });
+      } else {
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to fetch status counts",
+        //   type: "error",
+        // });
+        console.error("Failed to fetch status counts:", data.message);
       }
     } catch (error) {
+      setToast({
+        open: true,
+        message: "Error fetching status counts",
+        type: "error",
+      });
+
       console.error("Error fetching status counts:", error);
     }
   };
@@ -105,7 +152,6 @@ function Dashboard() {
           },
         },
       );
-      alert("called");
 
       const data = await response.json();
       console.log("Fetched issues:", data);
@@ -115,13 +161,27 @@ function Dashboard() {
         setShowModal(false);
 
         console.log("Issues set in state:", data.issues);
-        alert("Issues fetched successfully!");
+        setToast({
+          open: true,
+          message: "Issues fetched successfully!",
+          type: "success",
+        });
       } else {
         console.error("Failed to fetch issues:", data.message);
-        alert("Failed to fetch issues: " + data.message);
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to fetch issues: " + data.message,
+        //   type: "error",
+        // });
       }
     } catch (error) {
       console.error("Error fetching issues:", error);
+      setToast({
+        open: true,
+        message: "Error fetching issues: " + error.message,
+        type: "error",
+      });
     }
   };
 
@@ -138,13 +198,32 @@ function Dashboard() {
           formData,
         }),
       });
+      const data = await response.json();
       if (response.ok) {
-        alert("Issue added successfully!");
+        setToast({
+          open: true,
+          message: "Issue added successfully!",
+          type: "success",
+        });
         setShouldFetch(true);
+      } else {
+        console.error("Failed to add issue:", data.message);
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to add issue: " + data.message,
+        //   type: "error",
+        // });
       }
+
       resetFormData();
     } catch (error) {
       console.error("Error adding new issue:", error);
+      setToast({
+        open: true,
+        message: "Error adding new issue: " + error.message,
+        type: "error",
+      });
     }
   };
 
@@ -173,14 +252,28 @@ function Dashboard() {
         },
       });
       if (response.ok) {
-        alert("Issue deleted successfully!");
+        setToast({
+          open: true,
+          message: "Issue deleted successfully!",
+          type: "success",
+        });
         setShouldFetch(true);
       } else {
-        alert("Failed to delete issue");
+        // setToast({
+        //   open: true,
+        //   message: "Failed to delete issue",
+        //   type: "error",
+        // });
+        handleAuthError(response, logout, setToast);
+        console.error("Failed to delete issue:", await response.text());
       }
     } catch (error) {
       console.error("Error deleting issue:", error);
-      alert("Error deleting issue: " + error.message);
+      setToast({
+        open: true,
+        message: "Error deleting issue: " + error.message,
+        type: "error",
+      });
     }
   };
 
@@ -213,21 +306,32 @@ function Dashboard() {
           }),
         },
       );
+      const data = await response.json();
 
       if (response.ok) {
-        alert("Issue updated successfully!");
+        setToast({
+          open: true,
+          message: "Issue updated successfully!",
+          type: "success",
+        });
         setShouldFetch(true);
       } else {
-        const data = await response.json();
         console.error("Failed to update issue:", data.message);
-        alert("Failed to update issue");
+        handleAuthError(response, logout, setToast);
+        // setToast({
+        //   open: true,
+        //   message: "Failed to update issue: " + data.message,
+        //   type: "error",
+        // });
       }
     } catch (error) {
       console.error("Error updating issue:", error);
-      alert("Error updating issue: " + error.message);
+      setToast({
+        open: true,
+        message: "Error updating issue: " + error.message,
+        type: "error",
+      });
     }
-
-    alert("Update issue functionality");
     setIsEdit(false);
     setShowModal(false);
   };
@@ -249,6 +353,13 @@ function Dashboard() {
 
   return (
     <>
+      {toast.open && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, open: false })}
+        />
+      )}
       <div className="min-h-screen flex flex-col items-center justify-start bg-white px-2 sm:px-8 pt-16 pb-4">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
           <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between bg-gray-100 rounded-lg ">
@@ -294,28 +405,42 @@ function Dashboard() {
               ]}
               isEdit={true}
             />
-            {/* search button */}
-            <Button onClickFunction={fetchIssues} name={"Search"} />
-            {/* reset button */}
-            <Button onClickFunction={handleReset} name={"Reset"} />
-            <Button
-              onClickFunction={() => {
-                setShowModal(true);
-                setSelectedIssue(null);
-                setFormData({
-                  title: "",
-                  description: "",
-                  status: "open",
-                  priority: "medium",
-                });
-                setIsEdit(true);
-              }}
-              name={"Add New Issue"}
-            />
-            <Button
-              onClickFunction={() => exportToJSON(allIssues)}
-              name={"Export JSON"}
-            />
+            <div className="flex flex-row gap-2 md:w-auto md:mb-0">
+              {/* reset button */}
+              <Button
+                onClickFunction={handleReset}
+                name={"Reset"}
+                color="cyan1"
+              />{" "}
+              {/* search button */}
+              <Button
+                onClickFunction={fetchIssues}
+                name={"Search"}
+                color="cyan1"
+              />
+            </div>
+            <div className="flex flex-row gap-2 md:w-auto mb-2 md:mb-0">
+              <Button
+                onClickFunction={() => exportToJSON(allIssues)}
+                name={"Export JSON"}
+                color="cyan2"
+              />
+              <Button
+                onClickFunction={() => {
+                  setShowModal(true);
+                  setSelectedIssue(null);
+                  setFormData({
+                    title: "",
+                    description: "",
+                    status: "open",
+                    priority: "medium",
+                  });
+                  setIsEdit(true);
+                }}
+                name={"Add New Issue"}
+                color="cyan2"
+              />
+            </div>
           </div>{" "}
           <Table
             allIssues={allIssues}

@@ -3,8 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AuthForm from "../components/AuthForm";
 import { BASE_URL } from "../config";
+import Toast from "../components/Toast";
 
 function RegistrationPage() {
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "success",
+  });
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -49,13 +56,19 @@ function RegistrationPage() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        setToast({ open: true, message: data.message, type: "success" });
         console.log("Registration successful:", data.message);
         navigate("/login");
       } else {
+        setToast({ open: true, message: data.message, type: "error" });
         console.log("Registration failed:", data.message);
       }
     } catch (error) {
+      setToast({
+        open: true,
+        message: "Network or unexpected error",
+        type: "error",
+      });
       console.error("Network or unexpected error:", error);
     }
   };
@@ -70,6 +83,13 @@ function RegistrationPage() {
 
   return (
     <>
+      {toast.open && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, open: false })}
+        />
+      )}
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
         <AuthForm
           fields={fields}

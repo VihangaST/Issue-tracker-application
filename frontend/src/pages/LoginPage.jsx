@@ -1,14 +1,21 @@
 import React, { useState } from "react";
+import Toast from "../components/Toast";
 import useAuthStore from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 import { BASE_URL } from "../config";
+
 function LoginPage() {
   const navigate = useNavigate();
   const setToken = useAuthStore((state) => state.setToken);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+  });
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "success",
   });
 
   const fields = [
@@ -39,17 +46,19 @@ function LoginPage() {
 
       if (response.ok) {
         if (data.token) {
-          console.log("Received token:", data.token);
           setToken(data.token);
         }
-        alert(data.message);
-        console.log("Login successful:", data.message);
-        navigate("/dashboard");
+        setToast({ open: true, message: data.message, type: "success" });
+        setTimeout(() => navigate("/dashboard"), 1200);
       } else {
-        console.log("Login failed:", data.message);
+        setToast({ open: true, message: data.message, type: "error" });
       }
     } catch (error) {
-      console.error("Network or unexpected error:", error);
+      setToast({
+        open: true,
+        message: "Network or unexpected error",
+        type: "error",
+      });
     }
   };
 
@@ -59,6 +68,13 @@ function LoginPage() {
 
   return (
     <>
+      {toast.open && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, open: false })}
+        />
+      )}
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
         <AuthForm
           fields={fields}
