@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => console.log("All models synced"))
   .catch((err) => console.log(err));
 

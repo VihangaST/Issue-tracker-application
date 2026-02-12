@@ -12,21 +12,7 @@ import Toast from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 
 import ConfirmationDialog from "../components/ConfirmationDialog";
-
-// export to JSON function
-const exportToJSON = (issues) => {
-  const dataStr = JSON.stringify(issues, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json" });
-
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = "issues.json";
-  link.click();
-
-  URL.revokeObjectURL(url);
-};
+import { exportToJSON } from "../utils/exportUtils";
 
 function Dashboard() {
   // For editing/viewing an issue in modal
