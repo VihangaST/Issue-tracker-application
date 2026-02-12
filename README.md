@@ -141,7 +141,7 @@ frontend/
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/your-username/issue-tracker.git
+git clone https://github.com/VihangaST/Issue-tracker-application.git
 cd issue-tracker
 ```
 
@@ -219,8 +219,8 @@ npm run dev
 - Used **GET query parameters** for search & filtering
 - JWT-based stateless authentication
 - Zustand for lightweight global state management
-- Reusable `Modal` and `ConfirmationDialog` components
-- Clean separation of concerns (MVC pattern in backend)
+- Reusable components
+- Clean separation of concerns
 
 ---
 
