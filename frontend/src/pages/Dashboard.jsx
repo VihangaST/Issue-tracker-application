@@ -11,6 +11,8 @@ import Analytics from "../components/Analytics";
 import Toast from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 
+import ConfirmationDialog from "../components/ConfirmationDialog";
+
 // export to JSON function
 const exportToJSON = (issues) => {
   const dataStr = JSON.stringify(issues, null, 2);
@@ -238,19 +240,28 @@ function Dashboard() {
     setShouldFetch(true);
   };
 
-  // handleDeleteIssue function
-  const handleDeleteIssue = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this issue?")) {
-      return;
-    }
+  // Delete confirmation state
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const handleDeleteIssue = (id) => {
+    setDeleteId(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
-      const response = await fetch(`${BASE_URL}/api/issues/delete/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const response = await fetch(
+        `${BASE_URL}/api/issues/delete/${deleteId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         },
-      });
+      );
       if (response.ok) {
         setToast({
           open: true,
@@ -259,11 +270,6 @@ function Dashboard() {
         });
         setShouldFetch(true);
       } else {
-        // setToast({
-        //   open: true,
-        //   message: "Failed to delete issue",
-        //   type: "error",
-        // });
         handleAuthError(response, logout, setToast);
         console.error("Failed to delete issue:", await response.text());
       }
@@ -275,6 +281,13 @@ function Dashboard() {
         type: "error",
       });
     }
+    setDeleteConfirmOpen(false);
+    setDeleteId(null);
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmOpen(false);
+    setDeleteId(null);
   };
 
   // Handle row click to open modal with issue data
@@ -452,6 +465,12 @@ function Dashboard() {
             pageSize={pageSize}
             onPageChange={setCurrentPage}
             onRowClick={handleRowClick}
+          />
+          <ConfirmationDialog
+            open={deleteConfirmOpen}
+            message="Are you sure you want to delete this issue?"
+            onConfirm={confirmDelete}
+            onCancel={cancelDelete}
           />
           {/* Pagination Controls */}
           {totalIssues > 0 && (
