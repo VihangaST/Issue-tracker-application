@@ -6,7 +6,7 @@ function Button({ onClickFunction, name, color }) {
     cyan2: "bg-cyan-500 hover:bg-cyan-400",
     gray: "bg-gray-700 hover:bg-gray-600",
   };
-  const selectedColor = colorClasses[color] || colorClasses.cyan;
+  const selectedColor = colorClasses[color] || colorClasses.cyan1;
   return (
     <button
       className={`mb-4 rounded text-white font-semibold w-full md:w-48 h-8 ${selectedColor}`}
