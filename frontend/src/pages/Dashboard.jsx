@@ -13,9 +13,9 @@ import { useNavigate } from "react-router-dom";
 
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import { exportToJSON } from "../utils/exportUtils";
+import authenticateToken from "../../../backend/middleware/authenticateToken";
 
 function Dashboard() {
-  // For editing/viewing an issue in modal
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,6 +54,11 @@ function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
+  // delete confirmation state
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  //  handle authentication errors globally
   const handleAuthError = async (response) => {
     if (response.status === 401 || response.status === 403) {
       setToast({
@@ -71,7 +76,7 @@ function Dashboard() {
       });
     }
   };
-
+  // fetch status counts by status
   const fetchStatusCounts = async () => {
     try {
       const response = await fetch(`${BASE_URL}/api/issues/status-counts`, {
@@ -85,7 +90,6 @@ function Dashboard() {
 
       if (response.ok) {
         const statusCount = data.statusCounts;
-        console.log("Status counts:", statusCount);
         setToast({
           open: true,
           message: "Status counts fetched successfully!",
@@ -101,11 +105,6 @@ function Dashboard() {
         });
       } else {
         handleAuthError(response, logout, setToast);
-        // setToast({
-        //   open: true,
-        //   message: "Failed to fetch status counts",
-        //   type: "error",
-        // });
         console.error("Failed to fetch status counts:", data.message);
       }
     } catch (error) {
@@ -142,13 +141,11 @@ function Dashboard() {
       );
 
       const data = await response.json();
-      console.log("Fetched issues:", data);
       if (response.ok) {
         setAllIssues(data.issues);
         setTotalIssues(data.totalIssueCount || 0);
         setShowModal(false);
 
-        console.log("Issues set in state:", data.issues);
         setToast({
           open: true,
           message: "Issues fetched successfully!",
@@ -157,11 +154,6 @@ function Dashboard() {
       } else {
         console.error("Failed to fetch issues:", data.message);
         handleAuthError(response, logout, setToast);
-        // setToast({
-        //   open: true,
-        //   message: "Failed to fetch issues: " + data.message,
-        //   type: "error",
-        // });
       }
     } catch (error) {
       console.error("Error fetching issues:", error);
@@ -197,11 +189,6 @@ function Dashboard() {
       } else {
         console.error("Failed to add issue:", data.message);
         handleAuthError(response, logout, setToast);
-        // setToast({
-        //   open: true,
-        //   message: "Failed to add issue: " + data.message,
-        //   type: "error",
-        // });
       }
 
       resetFormData();
@@ -226,15 +213,12 @@ function Dashboard() {
     setShouldFetch(true);
   };
 
-  // Delete confirmation state
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-
+  // handle delete issue
   const handleDeleteIssue = (id) => {
     setDeleteId(id);
     setDeleteConfirmOpen(true);
   };
-
+  // handle delete
   const confirmDelete = async () => {
     if (!deleteId) return;
     try {
@@ -261,22 +245,19 @@ function Dashboard() {
       }
     } catch (error) {
       console.error("Error deleting issue:", error);
-      setToast({
-        open: true,
-        message: "Error deleting issue: " + error.message,
-        type: "error",
-      });
+      authenticateToken(logout, setToast);
     }
     setDeleteConfirmOpen(false);
     setDeleteId(null);
   };
 
+  // cancel delete
   const cancelDelete = () => {
     setDeleteConfirmOpen(false);
     setDeleteId(null);
   };
 
-  // Handle row click to open modal with issue data
+  // handle row click to open modal with issue data
   const handleRowClick = (issue) => {
     setSelectedIssue(issue);
     setFormData({
@@ -317,11 +298,6 @@ function Dashboard() {
       } else {
         console.error("Failed to update issue:", data.message);
         handleAuthError(response, logout, setToast);
-        // setToast({
-        //   open: true,
-        //   message: "Failed to update issue: " + data.message,
-        //   type: "error",
-        // });
       }
     } catch (error) {
       console.error("Error updating issue:", error);
@@ -335,13 +311,17 @@ function Dashboard() {
     setShowModal(false);
   };
 
+  // fetch issues on page change
   useEffect(() => {
     fetchIssues({ preventDefault: () => {} });
   }, [currentPage]);
 
+  // fetch status counts on component mount
   useEffect(() => {
     fetchStatusCounts();
   }, []);
+
+  // fetch issues and status counts after add/update/delete
   useEffect(() => {
     if (shouldFetch) {
       fetchIssues();
@@ -491,6 +471,7 @@ function Dashboard() {
             </div>
           )}
         </div>
+        {/* issue counts based on status */}
         <Analytics statusCounts={statusCounts} />
 
         {showModal && (

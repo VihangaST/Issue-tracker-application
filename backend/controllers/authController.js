@@ -2,11 +2,11 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// loginUser function
 export const loginUser = async (req, res) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
-    console.log("Received login request:", { email, password });
 
     const user = await User.findOne({ where: { email } });
 
@@ -19,9 +19,10 @@ export const loginUser = async (req, res) => {
       return res.status(404).json({ message: "Invalid email or password" });
     }
 
+    // generate JWT token
     const JWT_SECRET = process.env.JWT_SECRET;
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "2m",
+      expiresIn: "1hr",
     });
 
     res.json({

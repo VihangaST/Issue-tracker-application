@@ -3,7 +3,7 @@ import React from "react";
 function Table({ allIssues, handleDeleteIssue, onRowClick }) {
   // Fixed row count
   const ROW_COUNT = 10;
-  const rowHeight = 32; // 8 (padding) + 16 (line height) + 8 (padding)
+  const rowHeight = 32;
   const emptyRows = ROW_COUNT - allIssues.length;
 
   return (

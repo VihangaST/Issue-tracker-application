@@ -7,6 +7,7 @@ import {
   statusCounts,
 } from "../controllers/issueController.js";
 import authenticateToken from "../middleware/authenticateToken.js";
+
 const router = express.Router();
 
 router.get("/fetch", authenticateToken, fetchIssues);

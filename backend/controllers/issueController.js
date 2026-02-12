@@ -11,7 +11,7 @@ export const fetchIssues = async (req, res) => {
       page = 1,
       pageSize = 10,
     } = req.query;
-    // Extract userId from JWT middleware (use id from JWT payload)
+    // extract userId from JWT middleware (use id from JWT payload)
     const userId = req.user?.id;
 
     const where = {};
@@ -21,7 +21,6 @@ export const fetchIssues = async (req, res) => {
     if (searchTerm) {
       where.title = { [Sequelize.Op.like]: `%${searchTerm}%` };
     }
-    console.log("Constructed where clause for issue fetch:", where);
 
     // Pagination logic
     //no of issues per page
@@ -53,13 +52,13 @@ export const fetchIssues = async (req, res) => {
 export const addIssue = async (req, res) => {
   try {
     const { title, description, status, priority } = req.body.formData;
-    console.log("Received issue data:", {
-      title,
-      description,
-      status,
-      priority,
-    });
-    // Extract userId from JWT middleware (use id from JWT payload)
+    // console.log("Received issue data:", {
+    //   title,
+    //   description,
+    //   status,
+    //   priority,
+    // });
+
     const userId = req.user?.id;
     const newIssue = await Issue.create({
       title,
@@ -75,11 +74,11 @@ export const addIssue = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
+
 // delete issue
 export const deleteIssue = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Received request to delete issue with ID:", id);
     const deleted = await Issue.destroy({ where: { id } });
     if (deleted) {
       res.status(200).json({ message: "Issue deleted successfully" });
@@ -96,15 +95,7 @@ export const updateIssue = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, status, priority } = req.body.formData;
-    // Extract userId from JWT middleware (use id from JWT payload)
     const userId = req.user?.id;
-    console.log("Received update for issue ID:", id, "with data:", {
-      title,
-      description,
-      status,
-      priority,
-      userId,
-    });
     const [updated] = await Issue.update(
       { title, description, status, priority, userId },
       { where: { id } },
@@ -138,7 +129,7 @@ export const statusCounts = async (req, res) => {
       ],
       group: ["status"],
     });
-    console.log("Fetched status counts for user ID:", userId, statusCounts);
+    // console.log("Fetched status counts for user ID:", userId, statusCounts);
     res
       .status(200)
       .json({ message: "Status counts fetched successfully", statusCounts });

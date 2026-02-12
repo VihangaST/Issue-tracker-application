@@ -16,7 +16,7 @@ const Modal = ({
 }) => {
   if (!show) return null;
 
-  // State to manage confirmation dialog
+  // states to manage confirmation dialog
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingStatus, setPendingStatus] = useState(null);
 
@@ -47,11 +47,11 @@ const Modal = ({
 
   return (
     <>
-      <div style={backdropStyle}>
-        <div style={modalStyle}>
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-30 flex items-center justify-center z-[1000]">
+        <div className="bg-white p-6 rounded-lg min-w-[320px] shadow-lg relative">
           <button
             onClick={onClose}
-            style={closeButtonStyle}
+            className="absolute top-2 right-2 bg-transparent border-none text-2xl cursor-pointer leading-none text-gray-700 hover:text-red-500 focus:outline-none"
             aria-label="Close"
             type="button"
           >
@@ -128,7 +128,7 @@ const Modal = ({
                 />
               </div>
             </div>
-            {/* Show Edit button in view mode */}
+            {/* show Edit button in view mode */}
             {!isEdit && (
               <button
                 type="button"
@@ -138,7 +138,6 @@ const Modal = ({
                 Edit
               </button>
             )}
-
             {isEdit && (
               <button
                 type="submit"
@@ -160,33 +159,4 @@ const Modal = ({
   );
 };
 
-const backdropStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100vw",
-  height: "100vh",
-  background: "rgba(0,0,0,0.3)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 1000,
-};
-
-const modalStyle = {
-  background: "#fff",
-  padding: 24,
-  borderRadius: 8,
-  minWidth: 320,
-  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-};
-
-const closeButtonStyle = {
-  background: "none",
-  border: "none",
-  fontSize: 24,
-  cursor: "pointer",
-  lineHeight: 1,
-  color: "#333",
-};
 export default Modal;

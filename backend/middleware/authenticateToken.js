@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 
+// authenticate JWT token from Authorization header
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -8,7 +9,6 @@ const authenticateToken = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("Received token for authentication:", token);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

@@ -29,6 +29,7 @@ function RegistrationPage() {
     },
   ];
 
+  // handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -36,10 +37,14 @@ function RegistrationPage() {
   // handleRegistration function
   const handleRegistration = async (e) => {
     e.preventDefault();
-    alert("Registration button clicked!");
+
     // check password and confirm password match
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      setToast({
+        open: true,
+        message: "Passwords do not match!",
+        type: "error",
+      });
       return;
     }
     try {
@@ -57,11 +62,9 @@ function RegistrationPage() {
 
       if (response.ok) {
         setToast({ open: true, message: data.message, type: "success" });
-        console.log("Registration successful:", data.message);
         navigate("/");
       } else {
         setToast({ open: true, message: data.message, type: "error" });
-        console.log("Registration failed:", data.message);
       }
     } catch (error) {
       setToast({

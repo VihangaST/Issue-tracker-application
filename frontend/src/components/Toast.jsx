@@ -8,33 +8,14 @@ function Toast({ message, type = "success", onClose }) {
 
   return (
     <div
-      style={{
-        position: "fixed",
-        top: "1.5rem",
-        right: "1.5rem",
-        minWidth: 250,
-        padding: "1rem 1rem",
-        borderRadius: 8,
-        color: "#fff",
-        background: type === "success" ? "#27ae60" : "#e74c3c",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "1rem",
-      }}
+      className={`fixed top-6 right-6 min-w-[250px] px-4 py-4 rounded-lg text-white z-[9999] flex items-center justify-between gap-4 shadow-lg ${
+        type === "success" ? "bg-green-600" : "bg-red-600"
+      }`}
     >
       <span>{message}</span>
       <button
         onClick={onClose}
-        style={{
-          background: "none",
-          border: "none",
-          color: "#fff",
-          fontSize: "1.5rem",
-          cursor: "pointer",
-        }}
+        className="bg-transparent border-none text-white text-2xl cursor-pointer focus:outline-none"
         aria-label="Close"
       >
         ×

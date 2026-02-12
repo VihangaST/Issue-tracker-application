@@ -6,6 +6,7 @@ import logo from "../assets/logo.png";
 function Navbar() {
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
+
   const handleLogout = () => {
     logout();
     navigate("/");

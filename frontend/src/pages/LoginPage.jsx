@@ -30,6 +30,7 @@ function LoginPage() {
     });
   };
 
+  // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -62,10 +63,10 @@ function LoginPage() {
     }
   };
 
+  // handle form input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   return (
     <>
       {toast.open && (
