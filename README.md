@@ -25,6 +25,10 @@ This project demonstrates CRUD operations, authentication with JWT, pagination, 
   - `Open`
   - `In progress`
   - `Resolved`
+    Issue priority options:
+  - `High`
+  - `Medium`
+  - `Low`
 - Update issue status with confirmation dialog
 - Visual indicators for status & priority (badges/colors)
 - Search issues by title
@@ -65,9 +69,15 @@ Authorization: Bearer <token>
 - Node.js
 - Express.js
 - Sequelize ORM
-- MySQL
+- mysql2
+- cors
+- dotenv
 - bcrypt
 - jsonwebtoken (JWT)
+
+## Database
+
+- MySQL
 
 ## Deployment
 
@@ -125,12 +135,17 @@ backend/
 
 ```
 frontend/
- ├── components/
+ ├── components/-contains reusable components
  ├── pages/
+ │    ├── Dashboard.jsx
+ │    └── LoginPage.jsx
+ │    └── RegistrationPage.jsx
  ├── store/
  │    ├── useAuthStore.js
  │    └── useFormStore.js
  ├── utils/
+ │    └── exportUtils.js
+ └── App.jsx
  └── main.jsx
 ```
 
@@ -184,7 +199,7 @@ npm install
 Create `.env` file:
 
 ```
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:5000/
 ```
 
 Start frontend:
@@ -209,18 +224,6 @@ npm run dev
 - POST `/api/issues`
 - PUT `/api/issues/:id`
 - DELETE `/api/issues/:id`
-
----
-
-# 🧠 Architectural Decisions
-
-- Used **Sequelize ORM** for structured relational data management
-- Implemented **limit & offset pagination** for scalability
-- Used **GET query parameters** for search & filtering
-- JWT-based stateless authentication
-- Zustand for lightweight global state management
-- Reusable components
-- Clean separation of concerns
 
 ---
 
