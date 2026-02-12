@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import { exportToJSON } from "../utils/exportUtils";
-import authenticateToken from "../../../backend/middleware/authenticateToken";
 
 function Dashboard() {
   const [selectedIssue, setSelectedIssue] = useState(null);
@@ -245,7 +244,7 @@ function Dashboard() {
       }
     } catch (error) {
       console.error("Error deleting issue:", error);
-      authenticateToken(logout, setToast);
+      handleAuthError(response, logout, setToast);
     }
     setDeleteConfirmOpen(false);
     setDeleteId(null);
