@@ -5,7 +5,7 @@ function SelectComponent({ filter, onChange, name, options, isEdit }) {
   return (
     <>
       <select
-        className="mb-4 px-2 rounded border border-gray-300 mr-4 w-full md:w-48 h-8 custom-select"
+        className="mb-4 px-2 rounded border border-gray-300 w-full md:w-40 h-8 custom-select"
         value={filter}
         name={name}
         onChange={onChange}

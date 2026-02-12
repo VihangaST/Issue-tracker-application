@@ -11,6 +11,8 @@ import Analytics from "../components/Analytics";
 import Toast from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 
+import ConfirmationDialog from "../components/ConfirmationDialog";
+
 // export to JSON function
 const exportToJSON = (issues) => {
   const dataStr = JSON.stringify(issues, null, 2);
@@ -238,19 +240,28 @@ function Dashboard() {
     setShouldFetch(true);
   };
 
-  // handleDeleteIssue function
-  const handleDeleteIssue = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this issue?")) {
-      return;
-    }
+  // Delete confirmation state
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const handleDeleteIssue = (id) => {
+    setDeleteId(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
-      const response = await fetch(`${BASE_URL}/api/issues/delete/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const response = await fetch(
+        `${BASE_URL}/api/issues/delete/${deleteId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         },
-      });
+      );
       if (response.ok) {
         setToast({
           open: true,
@@ -259,11 +270,6 @@ function Dashboard() {
         });
         setShouldFetch(true);
       } else {
-        // setToast({
-        //   open: true,
-        //   message: "Failed to delete issue",
-        //   type: "error",
-        // });
         handleAuthError(response, logout, setToast);
         console.error("Failed to delete issue:", await response.text());
       }
@@ -275,6 +281,13 @@ function Dashboard() {
         type: "error",
       });
     }
+    setDeleteConfirmOpen(false);
+    setDeleteId(null);
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmOpen(false);
+    setDeleteId(null);
   };
 
   // Handle row click to open modal with issue data
@@ -362,64 +375,67 @@ function Dashboard() {
       )}
       <div className="min-h-screen flex flex-col items-center justify-start bg-white px-2 sm:px-8 pt-16 pb-4">
         <div className="w-full flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-md">
-          <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between bg-gray-100 rounded-lg ">
-            <input
-              type="text"
-              placeholder="Search issues..."
-              className="mb-2 p-2 rounded border text-gray-700 border-gray-300 mr-4 w-full md:w-auto"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-            />
-            {/* status filter */}
-            <SelectComponent
-              filter={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              name="status"
-              options={[
-                { label: "Select Status", value: "" },
-                { label: "Open", value: "open" },
-                { label: "In progress", value: "in progress" },
-                { label: "Resolved", value: "resolved" },
-              ]}
-              isEdit={true}
-            />
-            {/* priority filter */}
-            <SelectComponent
-              filter={priorityFilter}
-              onChange={(e) => {
-                setPriorityFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              name="priority"
-              options={[
-                { label: "Select Priority", value: "" },
-                { label: "High", value: "high" },
-                { label: "Medium", value: "medium" },
-                { label: "Low", value: "low" },
-              ]}
-              isEdit={true}
-            />
-            <div className="flex flex-row gap-2 md:w-auto md:mb-0">
-              {/* reset button */}
-              <Button
-                onClickFunction={handleReset}
-                name={"Reset"}
-                color="cyan1"
-              />{" "}
-              {/* search button */}
-              <Button
-                onClickFunction={fetchIssues}
-                name={"Search"}
-                color="cyan1"
+          <div className="w-full flex flex-col lg:flex-row md:items-center bg-gray-100 rounded-lg ">
+            <div className="w-full md:w-3/4 flex flex-col md:flex-row items-center gap-2 md:mb-0">
+              {" "}
+              <input
+                type="text"
+                placeholder="Search issues..."
+                className="mb-2 p-2 rounded border text-gray-700 border-gray-300 w-full md:w-48"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
               />
+              {/* status filter */}
+              <SelectComponent
+                filter={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                name="status"
+                options={[
+                  { label: "Select Status", value: "" },
+                  { label: "Open", value: "open" },
+                  { label: "In progress", value: "in progress" },
+                  { label: "Resolved", value: "resolved" },
+                ]}
+                isEdit={true}
+              />
+              {/* priority filter */}
+              <SelectComponent
+                filter={priorityFilter}
+                onChange={(e) => {
+                  setPriorityFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                name="priority"
+                options={[
+                  { label: "Select Priority", value: "" },
+                  { label: "High", value: "high" },
+                  { label: "Medium", value: "medium" },
+                  { label: "Low", value: "low" },
+                ]}
+                isEdit={true}
+              />
+              <div className="w-full md:w-1/3  flex flex-row items-center justify-end gap-2">
+                {/* reset button */}
+                <Button
+                  onClickFunction={handleReset}
+                  name={"Reset"}
+                  color="cyan1"
+                />{" "}
+                {/* search button */}
+                <Button
+                  onClickFunction={fetchIssues}
+                  name={"Search"}
+                  color="cyan1"
+                />
+              </div>
             </div>
-            <div className="flex flex-row gap-2 md:w-auto mb-2 md:mb-0">
+            <div className="w-full md:w-1/4 flex flex-row items-center justify-end gap-2">
               <Button
                 onClickFunction={() => exportToJSON(allIssues)}
                 name={"Export JSON"}
@@ -440,7 +456,7 @@ function Dashboard() {
                 name={"Add New Issue"}
                 color="cyan2"
               />
-            </div>
+            </div>{" "}
           </div>{" "}
           <Table
             allIssues={allIssues}
@@ -449,6 +465,12 @@ function Dashboard() {
             pageSize={pageSize}
             onPageChange={setCurrentPage}
             onRowClick={handleRowClick}
+          />
+          <ConfirmationDialog
+            open={deleteConfirmOpen}
+            message="Are you sure you want to delete this issue?"
+            onConfirm={confirmDelete}
+            onCancel={cancelDelete}
           />
           {/* Pagination Controls */}
           {totalIssues > 0 && (

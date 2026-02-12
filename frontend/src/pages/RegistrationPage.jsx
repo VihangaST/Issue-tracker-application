@@ -58,7 +58,7 @@ function RegistrationPage() {
       if (response.ok) {
         setToast({ open: true, message: data.message, type: "success" });
         console.log("Registration successful:", data.message);
-        navigate("/login");
+        navigate("/");
       } else {
         setToast({ open: true, message: data.message, type: "error" });
         console.log("Registration failed:", data.message);
