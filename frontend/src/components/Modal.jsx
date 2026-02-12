@@ -115,7 +115,7 @@ const Modal = ({
               type="submit"
               className="mb-4 w-full bg-cyan-700 text-white py-2 rounded hover:bg-cyan-600 transition-colors font-semibold"
             >
-              Update
+              Submit
             </button>
           )}
         </form>
