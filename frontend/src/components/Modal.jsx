@@ -15,6 +15,17 @@ const Modal = ({
   if (!show) return null;
 
   const handleChange = (e) => {
+    // Confirmation prompt when changing status to 'resolved'
+    if (
+      e.target.name === "status" &&
+      e.target.value === "resolved" &&
+      formData.status !== "resolved"
+    ) {
+      const confirmed = window.confirm(
+        "Are you sure you want to mark this issue as Resolved?",
+      );
+      if (!confirmed) return;
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   return (
