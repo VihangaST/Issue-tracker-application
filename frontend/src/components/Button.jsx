@@ -9,7 +9,7 @@ function Button({ onClickFunction, name, color }) {
   const selectedColor = colorClasses[color] || colorClasses.cyan;
   return (
     <button
-      className={`mb-4 rounded text-white font-semibold w-40 h-8 ${selectedColor}`}
+      className={`mb-4 rounded text-white font-semibold w-full md:w-48 h-8 ${selectedColor}`}
       onClick={onClickFunction}
     >
       {name}
