@@ -107,7 +107,7 @@ function RegistrationPage() {
           <span className="text-gray-600">Already have an account? </span>
           <button
             className="text-cyan-600 hover:underline focus:outline-none"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/")}
             type="button"
           >
             Login here
