@@ -47,7 +47,7 @@ const Modal = ({
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-30 flex items-center justify-center z-[1000]">
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/40 flex items-center justify-center z-[1000]">
         <div className="bg-white p-6 rounded-lg min-w-[320px] shadow-lg relative">
           <button
             onClick={onClose}
